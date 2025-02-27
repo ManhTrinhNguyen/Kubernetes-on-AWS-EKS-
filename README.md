@@ -96,7 +96,19 @@
 
 - And everytime I add a new Container to Fargate . Fargate will do the same
 
-----Fargate 
+----Fargate Advandtage----
+
+- No need to manage and provision servers
+
+- It all happen Per Demand : Everytime I add new Container . It will Allocated and Provisioned for it 
+
+- Need only the amount of the Infrastructure resources to run my Container
+
+- Pay only for What I used
+
+- Easily Scale without fixed resources defined beforehand
+
+- The Price base on how long the Container run and how much CPU and memory was requested for that container
 
 
 
