@@ -52,13 +52,23 @@
 
  - And the Control Plane,  and the Managing Service in the Control Plane manage these individual containers and do all these things that I mention before like resheduling container, making sure the desire state are the same and essentilly managing the whole lifecycle of the container from being started and sheduled to being removed
 
- - When I created ECS cluster which is Control Plane and my Container are running on Virtual Machine . That Virtual Machine are EC2 instances . Instead of me manage and create EC2 but EC2 instances will be connected to this ECS cluster that I created . EC2 will be managed by Control Plane process on ECS Cluster
+ - When I created ECS cluster which is Control Plane and my Container are running on Virtual Machine . That Virtual Machine are EC2 instances . EC2 instances will be connected to this ECS cluster that I created . EC2 will be managed by Control Plane process on ECS Cluster
 
 ----Which Services are running on my EC2 instances?----
 
   - Container runtime : Docker ...
 
   - ECS Agent installed : This way ECS process Control Plane can communicate with each individual EC2 instances and manage them
+
+  - In the end I have the Control Plane (ECS) that helped me manage all my Container and Automate the complex these that I don't want to do manually .
+
+  - However I have to manage EC2 Virtual Machine .
+    I have to create EC2 instances
+    I have to join the ECS Cluster
+    I have to make sure EC2 have enough Resources for the next Container when I schedule new Container
+    I have to Mange OS
+
+**ECS with Fargate**
 
 
 
