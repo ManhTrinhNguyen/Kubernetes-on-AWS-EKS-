@@ -70,6 +70,34 @@
 
 **ECS with Fargate**
 
+<img width="400" alt="Screenshot 2025-02-27 at 11 24 43" src="https://github.com/user-attachments/assets/bcbfe33e-26f3-4f8f-8cc6-5bd819237bc1" />
+
+- What if I want to delegate managment of a Infrastructure also to AWS ?
+
+- Container lifecycle manage by AWS
+
+- Hosting Infrastructure manage by AWS
+
+- Everything above called Fargate
+
+- Fargate is a alternative to EC2 Instances . Instead of create and provision EC2 instances and connect to ECS Cluster . I create Fargate instances and connect it to ECS cluster
+
+----How does Fargate work?----
+
+- Fargate is Serverless way to launch Container
+
+- Serverless mean No Server on AWS account . It is managed by AWS
+
+- I take the Container that I want to Deploy on AWS . That I want to manage by AWS services or Container Orchestration tool and I tell AWS here my container please run it . At this point I don't have any Virtual Machine that will run my Container . I haven't provision any server yet . I just have Control Plane ECS and the Fargate interface
+
+- Fargate will then analyze my Container . To see how much Resources my Container need to run ? How much CPU . How much RAM . How much Storage it need to be deploy and to run ?
+
+- And then Fargate itsel will automatically provision a server resources for that specific container . And then it will deploy and run that container on the provisioned server resources
+
+- And everytime I add a new Container to Fargate . Fargate will do the same
+
+----Fargate 
+
 
 
 
