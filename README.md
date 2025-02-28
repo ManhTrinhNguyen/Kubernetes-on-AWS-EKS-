@@ -136,9 +136,19 @@
 
 - Kubernetes much more popular than ECS . I also have access to all the Kubernetes tools and plugins and things are developing in the Kubernetes ecosystem
 
-- 
+**How does EKS work?**
 
+<img width="700" alt="Screenshot 2025-02-28 at 13 37 25" src="https://github.com/user-attachments/assets/31e95509-afe4-494a-9367-eb066b80c25e" />
 
+- With EKS I create a Cluster with represent the Control Plane
+
+- When I create an EKS services or EKS cluster , AWS will provision the backgroud Kubernetes Control Plane Node that already have all the Control Plane services installed on them
+
+- Bcs EKS managed by AWS Control Plane will Replicated accross multiple Availability Zone
+
+ -- If I am creating EKS in a region that has three AZs, then I will get automatically replication of my control Nodes on all of those AZs
+
+- And I have the Storage which is etcd part of the control plane processes which store the whole Cluster Configuration . Basically the current State of the Cluster, that and storage need to be replicated as well . Bcs Shouldn't lose data 
 
 
 
