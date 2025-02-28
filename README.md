@@ -140,6 +140,8 @@
 
 <img width="700" alt="Screenshot 2025-02-28 at 13 37 25" src="https://github.com/user-attachments/assets/31e95509-afe4-494a-9367-eb066b80c25e" />
 
+----Control Plane Node----
+
 - With EKS I create a Cluster with represent the Control Plane
 
 - When I create an EKS services or EKS cluster , AWS will provision the backgroud Kubernetes Control Plane Node that already have all the Control Plane services installed on them
@@ -148,7 +150,28 @@
 
  -- If I am creating EKS in a region that has three AZs, then I will get automatically replication of my control Nodes on all of those AZs
 
-- And I have the Storage which is etcd part of the control plane processes which store the whole Cluster Configuration . Basically the current State of the Cluster, that and storage need to be replicated as well . Bcs Shouldn't lose data 
+- And I have the Storage which is etcd part of the control plane processes which store the whole Cluster Configuration . Basically the current State of the Cluster, that and storage need to be replicated as well . Bcs Shouldn't lose data
+
+----Worker Node----
+
+<img width="700" alt="Screenshot 2025-02-28 at 14 00 19" src="https://github.com/user-attachments/assets/467ede87-3b9c-4707-af37-fd4c2d0c8b8f" />
+
+- I need Infrastructure that run actually runs my Pods and workdloads .
+
+- Same way as ECS . I will create EC2 Instances called Compute-Fleet of multiple virtual Server and then connect them EKS
+
+- In ECS I have EC2 isntances each server has ECS agent installed . This way Control Plane could communicate with individual Nodes
+
+- In EKS each EC2 instances will have Kubernetes Processes so this ways Control Plane can communicate with Worker Node
+
+- I have to manage the EC2 instances myself
+
+- In EKS cluster however a possiblely to choose a semi managed EC2 for my Cluster . I can group my Worker Node into Node Group and Node group will handle heavy lifting for me . Make it easier for me to configure new Worker Node in my Cluser
+
+  -- For example : Worker Nodes in EC2 instances manage by NodeGroup will get all the processes nessesary installed on them . So I don't have to worry about installing container runtime, Kubernetes Worker Processes etc ... for them to make it into Worker Node 
+
+
+
 
 
 
