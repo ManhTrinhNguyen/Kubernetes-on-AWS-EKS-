@@ -110,6 +110,33 @@
 
 - The Price base on how long the Container run and how much CPU and memory was requested for that container
 
+----Fragate is Greate BUT----
+
+- If I need more access to Underline Infrastructure running my Container then I have a flexibility and access with EC2 Instances
+
+**AWS Ecosystem Available**
+
+<img width="600" alt="Screenshot 2025-02-28 at 13 02 43" src="https://github.com/user-attachments/assets/755850a0-1838-45b1-a08a-881fc9842828" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
