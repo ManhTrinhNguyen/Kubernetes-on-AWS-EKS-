@@ -118,6 +118,28 @@
 
 <img width="600" alt="Screenshot 2025-02-28 at 13 02 43" src="https://github.com/user-attachments/assets/755850a0-1838-45b1-a08a-881fc9842828" />
 
+## Elastic Kubernetes Service (EKS)
+
+- Managing Kubernetes Cluster on AWS infrastructure
+
+- Alternative for ECS
+
+**Advandtage of EKS**
+
+<img width="700" alt="Screenshot 2025-02-28 at 13 19 33" src="https://github.com/user-attachments/assets/ebc443a6-87a3-4438-a3f2-f31e14ff698b" />
+
+- If I am using K8s already and My Project want to deploys their Kubernetes Cluster on AWS Infrastructure and want to keep K8s tools and not use AWS-container orchestration
+
+- If later I decide to migrate to other platform I can move that to other Infrastructure with K8s
+
+  -- Migration will be difficult . Bcs If I am using EKS and use alot of other tools in AWS when I migrate to other platform those tools will not available
+
+- Kubernetes much more popular than ECS . I also have access to all the Kubernetes tools and plugins and things are developing in the Kubernetes ecosystem
+
+- 
+
+
+
 
 
 
