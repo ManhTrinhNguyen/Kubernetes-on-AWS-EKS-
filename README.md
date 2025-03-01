@@ -230,6 +230,17 @@ Step 3 : Create EKS Cluster (Control Plane )
 
 Step 4 : Connect kubectl with EKS Cluster
 
+Step 5 : Create EC2 IAM Role for Node Group : Give certion Permission to call AWS API and configure and create stuff in AWS
+
+Step 6 : Create NodeGroup and attach to EKS cluster : NodeGroup which is a Group of EC2 instances that are gonna run as Worker Node in Cluster
+
+--- Now I have Worker Node connected to Control Plane Node . 
+--- Then I will have complete Kubernetes Cluster with Control Plan Nodes managed that running in an AWS managed account and Worker Node run on my Account
+
+Step 7 : Configure Auto Scaling for K8 Cluster : Based on resources required by Cluster, how many Pod I want to run. How many Applications I want to deploy in the Cluster, the number of EC2 instances or worker Nodes will be intelligenly Scale up and Scale down to match Resources Requirment
+
+Step 8 : Deploy my App on Cluster 
+
 
 
 
