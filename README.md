@@ -276,7 +276,13 @@ Step 8 : Deploy my App on Cluster
 
   - Bascically, My Worker Nodes which are going to run in my VPC in different Subnets, need to have set of Firewall rules that is nessesary for Control Plane nodes to connect to my Worker Node and also to manage them .
 
-  !!! !!! EKS running on different VPC which is managed by AWS outside of my AWS account . And Worker Node running on VPC that managed by my AWS account . So the communication need to work between Control Plane and Worker Node accross those different VPC 
+  !!! !!! EKS running on different VPC which is managed by AWS outside of my AWS account . And Worker Node running on VPC that managed by my AWS account . So the communication need to work between Control Plane and Worker Node accross those different VPC
+
+  - And for that communication all the nessesary Port need to configured correctly
+
+  - Another Important Example Specific to EKS is best practice for Creating and Configuring Subnets in my Worker Nodes VPC . That is having Public Subnet and Private Subnet . That mean when I create a Service which is Loadbalancer Type Service, Service get created also automatically a cloud native LoadBalancer get Created . What happen is when I configure Subnet into Private and Public K8 will know to create that external Loadbalancer in Public Subnet bcs I want that Load balancer to be accessible externally . So I want to create it in Public Subnet that allow external connection
+
+ - In Addition to that to giving this infomation to Kubernetes or Control Plane on EKS to my Worker Nodes VPC , I also give Kubernetes permission to change things in my VPC . It happen through a Role and that Permission to open PORT on my behalf in my VPC  
 ```
 
 
