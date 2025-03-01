@@ -259,7 +259,25 @@ Step 8 : Deploy my App on Cluster
 
 **Step 2 : Create VPC for Worker Nodes**
 
+```
+  - In AWS I have default VPC that AWS created for me in every Region
 
+  - And I also have subnet in VPC and Route Table
+
+  ----Why do I need another VPC for EKS cluster when I already have existing VPC with all Components?----
+
+  - EKS Cluster need specific networking Configuration for it to work without problems
+
+  - EKS based on Kunbernetes . Kubernetes has it own networking rules and AWS on top of that has it owns Networking Rules and those 2 have to work together and for that it need to configure correctly
+
+  - When I create VPC in order to create the EKS Cluster this VPC is a network that is going to run my Worker Nodes . So It is not a VPC that I am creating for EKS or the master Nodes, but rather for Worker Nodes
+
+  - For example : Some specific Configuration that Kubernetes or EKS cluster needs are Firewall Rule . Each VPC has Subnets, and Subnets has their own Firewall rules Which are configured by Network ACLs (Access Control List) . Inside Subnet I have EC2 and each EC2 instances can have their own Firewall rules Which is defined by Security Group
+
+  - Bascically, My Worker Nodes which are going to run in my VPC in different Subnets, need to have set of Firewall rules that is nessesary for Control Plane nodes to connect to my Worker Node and also to manage them .
+
+  !!! !!! EKS running on different VPC which is managed by AWS outside of my AWS account . And Worker Node running on VPC that managed by my AWS account . So the communication need to work between Control Plane and Worker Node accross those different VPC 
+```
 
 
 
