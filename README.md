@@ -218,12 +218,17 @@ Step 4 : Once it done I can simply connect to the Cluster using Kubectl command 
 - Create Private Repo for different Application Images and I can start pushing different version or different tag of the Images 
 
 
+## Create EKS Cluster (UI)
 
+**Steps to create EKS Cluster**
 
+Step 1 : Create EKS IAM role : Give EKS service certain Permission to create thing in AWS account 
 
+Step 2 : Create VPC for Worker Nodes
 
+Step 3 : Create EKS Cluster (Control Plane )
 
-
+Step 4 : Connect kubectl with EKS Cluster
 
 
 
