@@ -241,9 +241,23 @@ Step 7 : Configure Auto Scaling for K8 Cluster : Based on resources required by 
 
 Step 8 : Deploy my App on Cluster 
 
+**Step 1 : Create EKS IAM role**
 
+```
+  - I will create a Role in my AWS account that will have permissions attached to it and I will give that Role to AWS services outside my own Account, This will be services EKS that managed by AWS to Manage, Create components on my AWS account on my behalf
 
+  - Concept in AWS : I can give Role from my Account to another Account . So that Service on another account can manage components and Services on my Account
 
+  - In AWS Console go to IAM -> Choose Role -> Choose AWS service (Allow AWS services like EC2, Lamdba, or other perform action on AWS account) -> Choose EKS-Cluster (will automatically selected Policy for me) . This is done for Step 1 and 2
+
+  - In Step 3 : Give it a name and there is 2 piceces Information
+   -- First one : Which Service is allow to use That Role (Selected Trust entities) . In this case is EKS 
+   -- Second one :  What EKS allow to do in that Role (Policy) .
+
+  !!! Note : IAM service is not defined per Region but It is global for my Whole Account 
+```
+
+**Step 2 : Create VPC for Worker Nodes**
 
 
 
