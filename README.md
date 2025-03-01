@@ -154,7 +154,9 @@
 
 ----Worker Node----
 
-<img width="700" alt="Screenshot 2025-02-28 at 14 00 19" src="https://github.com/user-attachments/assets/467ede87-3b9c-4707-af37-fd4c2d0c8b8f" />
+<img width="500" alt="Screenshot 2025-02-28 at 14 00 19" src="https://github.com/user-attachments/assets/467ede87-3b9c-4707-af37-fd4c2d0c8b8f" />
+
+<img width="500" alt="Screenshot 2025-02-28 at 14 17 39" src="https://github.com/user-attachments/assets/b20c062d-4d5d-466a-93a2-cebbb0cafab5" />
 
 - I need Infrastructure that run actually runs my Pods and workdloads .
 
@@ -170,13 +172,50 @@
 
   -- For example : Worker Nodes in EC2 instances manage by NodeGroup will get all the processes nessesary installed on them . So I don't have to worry about installing container runtime, Kubernetes Worker Processes etc ... for them to make it into Worker Node 
 
+- When working with EKS Cluster it is a good practice to use NodeGroup bcs I can create multiple NodeGroup to group my Worker Nodes in different logical groups.
+
+- Still need to manage other stuff like : Auto Scaling, Creating new EC2 instances ...
+
+ -- However if that also something I want to delegate to AWS I can use Fargate instead . So I have fully managed Control Plane and fully Manage Worker Node
+
+----Or I can use Both EC2 and Fargate and the same time for the same EKS Cluster----
+
+<img width="600" alt="Screenshot 2025-02-28 at 14 20 50" src="https://github.com/user-attachments/assets/c7cf1e43-73b8-4954-bcc6-4778fbaa34c4" />
+
+- From the hosting perspective of where my containers are running having EC2 and Fargate as alternative this part is pretty much the same whether I use EKS or ECS
+
+- And this give me an option of combination of the services if I want to run the containerized Application on AWS using Container Orchestration tool to manage them
+
+**Step to create EKS Cluster**
+
+ <img width="600" alt="Screenshot 2025-02-28 at 14 31 53" src="https://github.com/user-attachments/assets/6007ab37-61c9-4baa-8f58-6924cb98ae90" />
+
+Step 1 : Provision an EKS cluster with Control Plane Nodes .
+
+Step 2 : Create a group of EC2 instances by using NodeGroup . So I don't have to Create EC2 instance individually Maybe I need 5000 virtual machine 
+
+Step 3 : Connect that NodeGroup or multiple NodeGroup to EKS Cluster 
+
+Step 4 : Once it done I can simply connect to the Cluster using Kubectl command and start deploying containers inside the Cluster 
+
+- Now I have NodeGroup and NodeGroup connected and that give me EKS Cluster
 
 
+## ECR (Elastic Container Registry)
 
+- This is a Repository for Container Images
 
+- Alternative to Dockerhub or Nexus
 
+**Advantage**
 
+- Part of the whole AWS system it intergate well with other services
 
+- Automatically get notified when a new version of the Image get pushed to a Repo and automatically dowload to my EKS or ECS
+
+----How to use----
+
+- Create Private Repo for different Application Images and I can start pushing different version or different tag of the Images 
 
 
 
