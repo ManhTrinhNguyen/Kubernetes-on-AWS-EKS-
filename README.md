@@ -352,14 +352,26 @@ Step 8 : Deploy my App on Cluster
 
 ## Step 3 : Create EKS Cluster (Control Plane)
 
-```
- - In the UI go to EKS
+- In the UI go to EKS
 
- 1. Configure Cluter : Name -> Role Selection
+**Configure Cluster**
+
+```
+   - Name -> Role Selection
 
    - Secrect Encryption: Secrect base64 encoded not very secure . I will encrypt my secrect by using Secret Encryption provided by AWS
 
-   - AWS has a service for Encryption . In the Manage K8 Services , I basically have an option bcs AWS services they are all Intergrated, tightly intergrated with each other 
+   - AWS has a service for Encryption . In the Manage K8 Services , I basically have an option bcs AWS services they are all Intergrated, tightly intergrated with each other
+```
+
+**Specify Networking**
+
+```
+ - I need to Specify or give information to EKS about my Networking . Where are my Worker will run
+
+ - I will select the VPC I created for Worker Node in step 2
+
+ - Also I will select the Security Group the one in VPC for Worker Node 
 ```
 
 
