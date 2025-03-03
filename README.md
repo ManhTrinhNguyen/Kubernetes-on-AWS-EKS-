@@ -241,7 +241,7 @@ Step 7 : Configure Auto Scaling for K8 Cluster : Based on resources required by 
 
 Step 8 : Deploy my App on Cluster 
 
-**Step 1 : Create EKS IAM role**
+## Step 1 : Create EKS IAM role
 
 ```
   - I will create a Role in my AWS account that will have permissions attached to it and I will give that Role to AWS services outside my own Account, This will be services EKS that managed by AWS to Manage, Create components on my AWS account on my behalf
@@ -257,7 +257,7 @@ Step 8 : Deploy my App on Cluster
   !!! Note : IAM service is not defined per Region but It is global for my Whole Account 
 ```
 
-**Step 2 : Create VPC for Worker Nodes**
+## Step 2 : Create VPC for Worker Nodes
 
 ```
   - In AWS I have default VPC that AWS created for me in every Region
@@ -336,6 +336,8 @@ Step 8 : Deploy my App on Cluster
  - We are also giving infomation about the Subnet ID in that VPC
 
  - Also the Security Group that I am using in that VPC . I can have Multiple Security Group so I need to tell EKS which one I use for Worker Node Group
+
+ - I also need this Information when creating the EKS cluster (Control Plane)
 ```
 
 **Wrap Up**
@@ -348,9 +350,17 @@ Step 8 : Deploy my App on Cluster
  - With these 2 informations now I can Create EKS Cluster
 ```
 
+## Step 3 : Create EKS Cluster (Control Plane)
 
+```
+ - In the UI go to EKS
 
+ 1. Configure Cluter : Name -> Role Selection
 
+   - Secrect Encryption: Secrect base64 encoded not very secure . I will encrypt my secrect by using Secret Encryption provided by AWS
+
+   - AWS has a service for Encryption . In the Manage K8 Services , I basically have an option bcs AWS services they are all Intergrated, tightly intergrated with each other 
+```
 
 
 
