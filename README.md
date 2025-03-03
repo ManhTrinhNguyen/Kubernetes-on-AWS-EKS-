@@ -328,6 +328,26 @@ Step 8 : Deploy my App on Cluster
  - After stack created I will go to Output . Now If I go to Output , I am actually going to see 3 Resources or Components that I gonna need as Infomation for EKS Cluster
 ```
 
+**What is EKS Cluster need to know?**
+
+```
+ - EKS Cluster need to know which VPC of my AWS accounts I want to use to deploy Worker Nodes
+
+ - We are also giving infomation about the Subnet ID in that VPC
+
+ - Also the Security Group that I am using in that VPC . I can have Multiple Security Group so I need to tell EKS which one I use for Worker Node Group
+```
+
+**Wrap Up**
+
+```
+ - So now I have a Role that will let EKS do things in my behalf in my AWS account to bacsically manage my Worker Nodes and other Resources.
+
+ - And I have VPC in that my Worker Node will run
+
+ - With these 2 informations now I can Create EKS Cluster
+```
+
 
 
 
