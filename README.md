@@ -284,18 +284,41 @@ Step 8 : Deploy my App on Cluster
 
  - In Addition to that to giving this infomation to Kubernetes or Control Plane on EKS to my Worker Nodes VPC , I also give Kubernetes permission to change things in my VPC . It happen through a Role and that Permission to open PORT on my behalf in my VPC . For example If I create NodePort Service, that mean my Worker Node need to open a PORT so that directly accessible on that NODE PORT . So Control Plane will do it automatically in my behalf
 
-----To Create VPC for EKS by using AWS template----
-
-- Create a whole stack 
 ```
 
+**To Create VPC for EKS by using AWS template (CloudFormation)**
 
+```
+ - Create a whole stack, the VPC and all Components, Security Group, Internet Gateway, Subnet ... in CloudForamtion
+ 
+ - In CloudFormation -> Choose Create Stack
+ 
+ - Generally I have defined or pre-defined files with all the configuration nessessary that basically need to describe what needs to create with which Configuration .
+ 
+ - Template also host in S3 buckets . Available on AWS S3 bucker URL
+ 
+ - There is a page in AWS EKS Docs where I can see all these URL  (https://docs.aws.amazon.com/eks/latest/userguide/creating-a-vpc.html)
+```
 
+**2 choices to create VPC**
 
+```
+ 1. Create VPC with all private Subnets
 
+ 2. Or Create VPC with all Public Subnets
 
+ 3. Or a mixture of those (Recommended by AWS)
+```
 
+**Create VPC with Private and Public Subnets**
 
+```
+ - URL of Public and Private Networl : https://s3.us-west-2.amazonaws.com/amazon-eks/cloudformation/2020-10-29/amazon-eks-vpc-private-subnets.yaml
+
+ - This is content of template using multiple components using one template file
+
+ - In the template : I have VPC itself with Cidr block - Subnet with Cidr block (is IP address range) - 
+```
 
 
 
