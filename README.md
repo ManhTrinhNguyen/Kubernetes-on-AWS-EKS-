@@ -366,12 +366,28 @@ Step 8 : Deploy my App on Cluster
 
 **Specify Networking**
 
+<img width="600" alt="Screenshot 2025-03-03 at 14 17 15" src="https://github.com/user-attachments/assets/cca45451-448a-46bc-8c81-8f4a04e9270d" />
+
 ```
  - I need to Specify or give information to EKS about my Networking . Where are my Worker will run
 
  - I will select the VPC I created for Worker Node in step 2
 
- - Also I will select the Security Group the one in VPC for Worker Node 
+ - Also I will select the Security Group the one in VPC for Worker Node
+
+ ----Cluster Access Enpoint----
+
+ - Configure access to the Kubernetes API server endpoint
+
+ - API server is a entry point to my Cluster.
+
+ - Also API server is one of the Control Plane Processes so It is going to deployed and running inside the EKS VPC . AWS managed VPC . 
+
+ - Public endpoint : If I want to Connect or talk to K8 Cluster externally, Access API Server or the Cluster from Local Laptop by using CLI, Kubectl (Outside the both VPC) I need to enable Public Endpoint
+
+ - Private enpoint : Enable Worker Nodes to communicate or connect to the Cluster Endpoint within my VPC network . So it enalbe the Control Plane and the Worker Node to talk to each other through my VPC . So the Network interface will get created in my VPC that would enable the traffic to go from my Worker Node through our VPC directly to the Control Plane Node
+
+ - 
 ```
 
 
