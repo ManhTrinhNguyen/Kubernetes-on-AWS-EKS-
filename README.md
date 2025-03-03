@@ -387,8 +387,11 @@ Step 8 : Deploy my App on Cluster
 
  - Private enpoint : Enable Worker Nodes to communicate or connect to the Cluster Endpoint within my VPC network . So it enalbe the Control Plane and the Worker Node to talk to each other through my VPC . So the Network interface will get created in my VPC that would enable the traffic to go from my Worker Node through our VPC directly to the Control Plane Node
 
- - 
+ - I can choose Public and Private mode to have Both
 ```
+
+**Configure logging**
+
 
 
 
