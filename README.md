@@ -313,11 +313,19 @@ Step 8 : Deploy my App on Cluster
 **Create VPC with Private and Public Subnets**
 
 ```
- - URL of Public and Private Networl : https://s3.us-west-2.amazonaws.com/amazon-eks/cloudformation/2020-10-29/amazon-eks-vpc-private-subnets.yaml
+ - URL of Public and Private Network : https://s3.us-west-2.amazonaws.com/amazon-eks/cloudformation/2020-10-29/amazon-eks-vpc-private-subnets.yaml
 
  - This is content of template using multiple components using one template file
 
- - In the template : I have VPC itself with Cidr block - Subnet with Cidr block (is IP address range) - 
+ - In the template : I have VPC itself with Cidr block - Subnet with Cidr block (is IP address range) - IP address range will be use to assign the IP address to Components in Kubernetes Cluster
+
+ - Put Template URL S3 URL
+
+ - Next I have Specific Stack detail - Parameter : I have possibility to configure the IP address ranges before creating the stack
+
+ - Then I will summary and create the Stack
+
+ - After stack created I will go to Output . Now If I go to Output , I am actually going to see 3 Resources or Components that I gonna need as Infomation for EKS Cluster
 ```
 
 
