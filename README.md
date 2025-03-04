@@ -453,6 +453,8 @@ Step 8 : Deploy my App on Cluster
 
  - **To get Namespaces** : `kubectl get ns`
 
+ - **To see Info of K8 Cluster**: `kubectl cluster-info` -> I Will have the Cluster endpoint . Which is the same endpoint in Detail (UI)
+
 
 
 
