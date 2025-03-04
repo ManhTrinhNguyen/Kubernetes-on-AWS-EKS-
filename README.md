@@ -392,7 +392,29 @@ Step 8 : Deploy my App on Cluster
 
 **Configure logging**
 
+```
+ - This is a Configuration Logging for my Control Plane
 
+ - I able to decide if I want to see the Logs that come from the Master Processes (Logging on the Control Plane):
+
+   -- All the Request API Server, Authentication Event, What the Controller Manager does, Sheduler does
+
+   -- Managed by AWS
+```
+
+**AWS add-on**
+
+```
+  - Core-DNS : Kubernetes Process is going to add DNS services to my EKS Cluster . This way I will able to use DNS name inside the Cluster to communicate instead of using the IP address
+
+  - Kube-Proxy : Manage Networking tasks like routing in my Cluster . Kube-proxy will run on all of My Nodes and forward all the traffics between Services and Pods using these Routing Rules and make sure all the part of the CLuster can Communicate
+
+  - Amazon VPC CNI(Container Network Interface ) :
+
+   -- Enable easier communication my My Cluster . It will create Network Layers within the Cluster, so that all the Pods running on all these different Nodes will communicate with each other as if they were running on the same Server (The same local network) .
+
+   -- CNI Plugin will basically allocated the Pods, the IP addresses from the IP address Range allocated to the Cluster through the AWS VPC
+```
 
 
 
