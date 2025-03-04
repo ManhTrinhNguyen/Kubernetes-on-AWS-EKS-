@@ -455,10 +455,7 @@ Step 8 : Deploy my App on Cluster
 
  - **To see Info of K8 Cluster**: `kubectl cluster-info` -> I Will have the Cluster endpoint . Which is the same endpoint in Detail (UI)
 
-
-
-
-
+## Cluster Overview - Cluster Node 
 
 
 
