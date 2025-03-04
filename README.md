@@ -424,31 +424,34 @@ Step 8 : Deploy my App on Cluster
 
 - Eventhough I don't have Worker Nodes yet . I can still can talk to the API Server bcs Control Plane is running
 
-- They way to do is create kubeconfig file for newly created EKS Cluster
+- They way to connect is create kubeconfig file for newly created EKS Cluster
 
 **Configure Kubectl to connect to EKS Cluster**
 
 ```
-
  Step 1: To see AWS configure detail : `aws configure list`
 
  Step 2: To create kubeconfig file locally : `aws eks update-kubeconfig --name <cluster-name>`
 
    -- --name : Connection info for Cluster . Which is the Cluster Name
-
 ```
 
- - After Created kubeconfig fike . The file will store in .kube/config
+ - After Created kubeconfig file my Local machine already connected to AWS K8 Cluster. The file will store in .kube/config
 
- - To read this kubeconfig fike : `cat .kube/config`
+ - **To read this kubeconfig file** : `cat .kube/config`
    
-<img width="600" alt="Screenshot 2025-03-04 at 13 29 40" src="https://github.com/user-attachments/assets/7f6d724a-10c3-4743-a432-0224ce367664" />
+<img width="500" alt="Screenshot 2025-03-04 at 13 29 40" src="https://github.com/user-attachments/assets/7f6d724a-10c3-4743-a432-0224ce367664" />
 
  - In this Kubeconfig file I can have multiple Cluster Credentials for multiple different K8's Cluster .
  
    - Context : For each of those Cluster, It will actually create a the context entry in this file and to know which CLuster I need to connect to anytime I use kubectl command .
   
    - Current Context : Since Kubectl command by default will use this kubeconfig file, in this default location . The current context is a set in this file that kubectl will use as a current Cluster context to connect to that Cluster
+  
+
+ - **To get Worker Node** : `kubectl get nodes`
+
+ - **To get Namespaces** : `kubectl get ns`
 
 
 
