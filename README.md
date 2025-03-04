@@ -413,7 +413,7 @@ Step 8 : Deploy my App on Cluster
 
    -- Enable easier communication my My Cluster . It will create Network Layers within the Cluster, so that all the Pods running on all these different Nodes will communicate with each other as if they were running on the same Server (The same local network) .
 
-   -- CNI Plugin will basically allocated the Pods, the IP addresses from the IP address Range allocated to the Cluster through the AWS VPC
+   -- CNI Plugin will basically allocate the Pods's the IP addresses from the IP address Range allocated to the Cluster through the AWS VPC . So this way my Pods able to communicate to any Resources if needed 
 ```
 
 
