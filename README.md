@@ -457,9 +457,44 @@ Step 8 : Deploy my App on Cluster
 
 ## Cluster Overview - Cluster Node 
 
+**Detail Overview**
 
+```
+ - API Server endpoint : This is where K8 API Server accessible at
 
+ - Bcs I selected Public I can access this Enpoint from External Client
 
+ ----Cluster IAM Role ARN----
+
+ - Role that I assigned in the Cluster
+
+ - Cluster ARN : EKS Cluster unique ID 
+```
+
+**Compute**
+
+```
+ - 3 Sections : Nodes, Nodes Group, Fargate profile
+
+ - I can run the Pod or the workload on my Worker Nodes in Kubernetes either using EC2 instances or Fargate
+
+ - Fargate will provison virtual machine in the background that will run the Pod
+
+ - Summary : Nodes group is self-managed . Fargate is managed on top of Managed Control Plane 
+```
+
+**Networking**
+
+```
+  - I have created and pass it on to EKS Cluster
+
+  - That mean that Control Plane is running it's managed by AWS . and I have to created Worker Node and connects those Worker Node to the Control Plane 
+```
+
+## Create EC2 IAM Role for my Node Group 
+
+```
+```
 
 
 
