@@ -494,7 +494,53 @@ Step 8 : Deploy my App on Cluster
 ## Create EC2 IAM Role for my Node Group 
 
 ```
+ - I want to create NodeGroup instead of individual Instance Worker Node bcs if I want to create 100 Instances at 1 time it will very cost time .
+
+ - Instead I want to group them , or maybe I want multiple Group are all then connected to Control Plane
 ```
+
+**Create EC2 Role for Node Group**
+
+```
+ - Worker Nodes run Workers processes . Kublet is one of the Processes
+
+ - Kubelet is the main Processes that responsible for scheduling Pods , getting all Resources from Servers like RAM, CPU ... assigning to the Pod . But also communicate with other Services in AWS and K8's Control Plane .
+
+ - Basically Kubelet make various API calls, including to AWS services on my behalf .
+
+ - So I need to give Kubelet permissions to execute all of those Tasks . (Give Kubelet a IAM Roles)
+
+  - Step 1 : I need to create a Role for NodeGroup that allow Worker Processes to perform certain Action 
+
+   -- Go to IAM Roles -> Create Role for EC2 -> so Processes on EC2 will then able to do stuff or interact with other AWS Services -> Then Choose AmazonEKSWorkerNodePolicy, ContainerRegistryPolicyReadOnly, Amazon EKS_CNI Policy
+
+   -- AmazonEKSWorkerNodePolicy : Include access to EC2 and EKS
+
+   -- ContainerRegistryPolicyReadOnly : Include Permission for ECR (Elastic Container Registry) . This will be important relevant when we connect our Worker Nodes with the Container registry , so they can pull the Container Registry so they can pull Images from there with new Versions .
+
+    !!! Note : AWS services intergrate well together . As long as we give them permission to interact with each other we can Configure communication between them .
+
+   -- Amazon_eks_CNI policy : This has access to EC2 services . All Actions can perform on that Services . Baciscally CNI is a Container Network Interface. CNI is internal network in Kubernetes . So that Pod in different Servers can communicate with each other . No matter they are on Worker Nodes or Control Plane Nodes or which of those Node they are located . 
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
