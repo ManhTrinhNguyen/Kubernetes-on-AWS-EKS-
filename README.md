@@ -491,7 +491,7 @@ Step 8 : Deploy my App on Cluster
   - That mean that Control Plane is running it's managed by AWS . and I have to created Worker Node and connects those Worker Node to the Control Plane 
 ```
 
-## Create EC2 IAM Role for my Node Group 
+## Step 5:  Create EC2 IAM Role for my Node Group 
 
 ```
  - I want to create NodeGroup instead of individual Instance Worker Node bcs if I want to create 100 Instances at 1 time it will very cost time .
@@ -523,7 +523,34 @@ Step 8 : Deploy my App on Cluster
    -- Amazon_eks_CNI policy : This has access to EC2 services . All Actions can perform on that Services . Baciscally CNI is a Container Network Interface. CNI is internal network in Kubernetes . So that Pod in different Servers can communicate with each other . No matter they are on Worker Nodes or Control Plane Nodes or which of those Node they are located . 
 ```
 
+## Step 6 : Add NodeGroup to EKS Cluster 
 
+```
+ - Step 1: Goto EKS Compute -> Add Node Group -> Select the Role that will give Node Group and EC2 Instaces in that Node Group Permission for interacting with other AWS Services
+
+ - Step 2 : Set compute and scaling configuration
+
+   -- AMI Type
+
+   -- Capacity Type : On demand (You pay for what you use) .
+
+   -- Instance Type : t3.small . The Type have CPU, Memory ...
+
+   -- Disk size : The Storage
+
+   -- NodeGroup Scaling Infomation configuration : Desired size , Minimum Size, Maximum Size .
+     -- For example : If my Desired size : 3, Minium Size : 2 , Desire Size : 4 . So It will launch with 3 Intances and it will scale up or down base on the Work Load it will run on the Cluster
+
+   -- NodeGroup Update configuration : NodeGroup will update by AWS  to a latest Version when they are released . I can define how many Node it should taken offline during this update process
+
+ - Step 3 : Specify Network Configuration
+
+  -- Our Worker Node need to run in VPC that I have created with these specific configuration . So that Control Plan that will run on another VPC on another AWS Account can connec to VPC and can Managed the Worker Node  running in the different subnet within the VPC.
+
+  -- So I am configuring which VPC and Subnet our NodeGroups is going to launch
+
+  -- Enable SSH that allowing access to Worker Node 
+```
 
 
 
