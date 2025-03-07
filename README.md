@@ -553,6 +553,27 @@ Step 8 : Deploy my App on Cluster
 ```
 
 
+# Virtual Private Cloud (VPC)
+
+**What is VPC**
+
+```
+ - Virtual Private CLoud is my own Isolated Network In the Cloud (Isoliated my Network from others. Bcs others might use the name Network from that Data center)
+
+ - Whenever I create account I will have Default VPC in each Region
+
+ - VPC span all Availability Zone (Subnet) in that Regions
+
+ !!! NOTE : My Resources have to be alway running in the VPC
+
+ - In the bigger Company they could use multiple VPC in multiple different Region 
+```
+
+**What does VPC include ?**
+
+```
+ - VPC is like a Virtual Representation of Physical Network Infrastructure: Server set up , Network configuration moved into the Cloud
+```
 
 
 
