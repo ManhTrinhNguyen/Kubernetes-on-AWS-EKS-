@@ -608,7 +608,7 @@ Step 8 : Deploy my App on Cluster
  - Allow me to connect the VPC or its Subnet to the Internet(Outside Network)
 ```
 
-**Controll Access - Security**
+**Controll Access - Security - Firewall Rule**
 
 ```
  - I need to control what traffic Enter my VPC
