@@ -552,7 +552,20 @@ Step 8 : Deploy my App on Cluster
 
   -- I have specified 2 EC2 instances for this NodeGroup right now . And I have 4 Subner . Which mean NodeGroup can launch EC2 instances in different Subnet . Eventhough right now I have just 2 if I add additional EC2 instances later If I scale it up to 10 EC2 Instances then it will be distributed among different Subnet 
 
-  -- Enable SSH that allowing access to Worker Node 
+  -- Enable SSH that allowing access to Worker Node
+
+```
+
+**Wrap up**
+
+```
+ - A part of initialization of these EC2 instances is installing all the nessesary processes on these Servers . Bcs In order to run Pods I need Container runtime, Kubelet, KubeProxy . All of those things get installed by create Node Group
+```
+
+**Cost Effiency**
+
+```
+ - Set Desire Node, Minimum Node, Maximum Node as a Minimum and then Configure Cluster auto Scaler to manage scale up and down of EC2 Instances for me based on how much Resources my pod requires . Big Advandtage is Saving cost of Infrastructure 
 ```
 
 
