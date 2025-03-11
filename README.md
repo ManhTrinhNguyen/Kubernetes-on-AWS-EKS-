@@ -241,7 +241,7 @@ Step 7 : Configure Auto Scaling for K8 Cluster : Based on resources required by 
 
 Step 8 : Deploy my App on Cluster 
 
-## Step 1 : Create EKS IAM role
+### Step 1 : Create EKS IAM role
 
 ```
   - I will create a Role in my AWS account that will have permissions attached to it and I will give that Role to AWS services outside my own Account, This will be services EKS that managed by AWS to Manage, Create components on my AWS account on my behalf
@@ -257,7 +257,7 @@ Step 8 : Deploy my App on Cluster
   !!! Note : IAM service is not defined per Region but It is global for my Whole Account 
 ```
 
-## Step 2 : Create VPC for Worker Nodes
+### Step 2 : Create VPC for Worker Nodes
 
 ```
   - In AWS I have default VPC that AWS created for me in every Region
@@ -350,7 +350,7 @@ Step 8 : Deploy my App on Cluster
  - With these 2 informations now I can Create EKS Cluster
 ```
 
-## Step 3 : Create EKS Cluster (Control Plane)
+### Step 3 : Create EKS Cluster (Control Plane)
 
 - In the UI go to EKS
 
@@ -420,7 +420,7 @@ Step 8 : Deploy my App on Cluster
 
 **Summary and Create EKS Cluster**
 
-## Step 4 : Connect kubectl locally with EKS Cluster 
+### Step 4 : Connect kubectl locally with EKS Cluster 
 
 - Eventhough I don't have Worker Nodes yet . I can still can talk to the API Server bcs Control Plane is running
 
@@ -455,7 +455,7 @@ Step 8 : Deploy my App on Cluster
 
  - **To see Info of K8 Cluster**: `kubectl cluster-info` -> I Will have the Cluster endpoint . Which is the same endpoint in Detail (UI)
 
-## Cluster Overview - Cluster Node 
+### Cluster Overview - Cluster Node 
 
 **Detail Overview**
 
@@ -491,7 +491,7 @@ Step 8 : Deploy my App on Cluster
   - That mean that Control Plane is running it's managed by AWS . and I have to created Worker Node and connects those Worker Node to the Control Plane 
 ```
 
-## Step 5:  Create EC2 IAM Role for my Node Group 
+### Step 5:  Create EC2 IAM Role for my Node Group 
 
 ```
  - I want to create NodeGroup instead of individual Instance Worker Node bcs if I want to create 100 Instances at 1 time it will very cost time .
@@ -524,7 +524,7 @@ Step 8 : Deploy my App on Cluster
 
 ```
 
-## Step 6 : Add NodeGroup to EKS Cluster 
+### Step 6 : Add NodeGroup to EKS Cluster 
 
 ```
  - Step 1: Goto EKS Compute -> Add Node Group -> Select the Role that will give Node Group and EC2 Instaces in that Node Group Permission for interacting with other AWS Services
@@ -567,7 +567,6 @@ Step 8 : Deploy my App on Cluster
 ```
  - Set Desire Node, Minimum Node, Maximum Node as a Minimum and then Configure Cluster auto Scaler to manage scale up and down of EC2 Instances for me based on how much Resources my pod requires . Big Advandtage is Saving cost of Infrastructure 
 ```
-
 
 # Virtual Private Cloud (VPC)
 
@@ -642,8 +641,15 @@ Step 8 : Deploy my App on Cluster
  - Control Traffic on Instances Level
 ```
 
+## Configure Auto Scaling in EKS Cluster 
 
+**How Auto Scaling work in EKS Cluster**
 
+```
+ - In the detail section of NodeGroup Configuration -> Check Autoscaling Group name
+
+ - Autoscaling Group was created in AWS . 
+```
 
 
 
