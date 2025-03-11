@@ -520,7 +520,8 @@ Step 8 : Deploy my App on Cluster
 
     !!! Note : AWS services intergrate well together . As long as we give them permission to interact with each other we can Configure communication between them .
 
-   -- Amazon_eks_CNI policy : This has access to EC2 services . All Actions can perform on that Services . Baciscally CNI is a Container Network Interface. CNI is internal network in Kubernetes . So that Pod in different Servers can communicate with each other . No matter they are on Worker Nodes or Control Plane Nodes or which of those Node they are located . 
+   -- Amazon_eks_CNI policy : This has access to EC2 services . All Actions can perform on that Services . Baciscally CNI is a Container Network Interface. CNI is internal network in Kubernetes . So that Pod in different Servers can communicate with each other . No matter they are on Worker Nodes or Control Plane Nodes or which of those Node they are located . I am giving that role access to the CNI policy so that it can interact with other Worker Nodes 
+
 ```
 
 ## Step 6 : Add NodeGroup to EKS Cluster 
@@ -545,9 +546,11 @@ Step 8 : Deploy my App on Cluster
 
  - Step 3 : Specify Network Configuration
 
-  -- Our Worker Node need to run in VPC that I have created with these specific configuration . So that Control Plan that will run on another VPC on another AWS Account can connec to VPC and can Managed the Worker Node  running in the different subnet within the VPC.
+  -- Our Worker Node need to run in VPC that I have created with these specific configuration . So that Control Plan which is running on another VPC on another AWS Account can connect to that VPC and can Managed the Worker Node  running in the different Subnet within that VPC.
 
   -- So I am configuring which VPC and Subnet our NodeGroups is going to launch
+
+  -- I have specified 2 EC2 instances for this NodeGroup right now . And I have 4 Subner . Which mean NodeGroup can launch EC2 instances in different Subnet . Eventhough right now I have just 2 if I add additional EC2 instances later If I scale it up to 10 EC2 Instances then it will be distributed among different Subnet 
 
   -- Enable SSH that allowing access to Worker Node 
 ```
