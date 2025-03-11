@@ -286,6 +286,46 @@ Step 8 : Deploy my App on Cluster
 
 ```
 
+**Why do I need another VPC for EKS cluster when I already have existing VPC with all Components? Part 2**
+
+```
+ - Using a separate VPC for your Amazon EKS (Elastic Kubernetes Service) cluster instead of the default VPC is generally recommended for several reasons:
+
+  1. Security & Isolation
+
+   - A dedicated VPC ensures that your Kubernetes workloads are isolated from other AWS resources that may exist in the default VPC.
+   - You can apply fine-grained network security policies (e.g., private subnets, security groups, and network ACLs) to control access.
+
+  2. Custom Networking Requirements
+
+   - EKS requires specific networking configurations, such as multiple subnets across Availability Zones (AZs) for high availability.
+   - You might want to configure private subnets for worker nodes to restrict public internet exposure.
+
+  3. Avoiding Conflicts
+
+   - The default VPC might have overlapping CIDR ranges, which could cause IP address conflicts if you have multiple services running.
+   - Creating a separate VPC allows for better IP address planning, avoiding subnet exhaustion issues.
+
+  4. Better Control over VPC Components
+
+   - With a custom VPC, you can configure custom NAT gateways, route tables, security groups, and other networking components tailored for Kubernetes.
+   - The default VPC might not have the necessary private/public subnet separation or the correct settings for Kubernetes networking.
+
+  5. Compliance & Governance
+
+   - Some organizations have strict compliance policies requiring Kubernetes clusters to be deployed in dedicated, isolated environments.
+   - A separate VPC makes it easier to enforce security and compliance policies.
+
+  6. Enhanced Scalability
+
+   - If your EKS cluster scales significantly, it’s better to have a VPC designed to handle increased network traffic and resources.
+   - The default VPC may have limited resources that might not be sufficient for large-scale Kubernetes workloads.
+
+  7. Multi-Environment Deployments
+
+  - If you deploy multiple environments (e.g., Dev, Staging, and Production), using separate VPCs for each cluster helps maintain isolation and prevent interference.
+```
+
 **To Create VPC for EKS by using AWS template (CloudFormation)**
 
 ```
