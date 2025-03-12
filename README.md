@@ -399,7 +399,7 @@ Step 8 : Deploy my App on Cluster
 ```
    - Name -> Role Selection
 
-   - Secrect Encryption: Secrect base64 encoded not very secure . I will encrypt my secrect by using Secret Encryption provided by AWS
+   - Secrect Encryption: Secrect base64 encoded not very secure . I need to encrypt Secret . To encrypt Secret I need to install addition tools to do that . Also I can encrypt my secrect by using Secret Encryption provided by AWS
 
    - AWS has a service for Encryption . In the Manage K8 Services , I basically have an option bcs AWS services they are all Intergrated, tightly intergrated with each other
 ```
