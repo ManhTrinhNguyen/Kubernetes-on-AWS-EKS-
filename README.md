@@ -688,10 +688,54 @@ Step 8 : Deploy my App on Cluster
 ```
  - In the detail section of NodeGroup Configuration -> Check Autoscaling Group name
 
- - Autoscaling Group was created in AWS . 
+ - Autoscaling Group was created in AWS .
+
+ - I can see Autoscaling Group Component in NodeGroup's Detail they have a Autoscaling Group URL
 ```
 
+**What Autoscaling Group Component Does ?**
 
+``` 
+ - Autoscaling Group Component logically group a number of EC2 instances together and has a Configuration of Minimum number of EC2 intances to scale down to and Maximum to scale up to. However the Autoscaling group there just to group these Instances It doesn't actually automatically scale our Resources
+
+ - AWS don't do it for me . I need to configure Autoscaler EKS component that is running inside the Kubernetes Cluster that will use this AWS Autoscaling Group will able to scale up or scale down the EC2 instances for me .
+
+ ----Example When it should happen ? How does it work ?----
+
+ - If I have 10 EC2 Instances in my Cluster and the Cluster Auto Scaler Componet inside the Cluster see that most of these EC2 Instances underutilized it will take a Pods from 2 EC2 Instances and distribute them on the rest of them and stop those 2 EC2 Instances and this will save Infrastructure cost in AWS bcs now I have 2 Instances less running bcs I don't need that much Resources
+
+ - OR the opposite When I want to schedule new pod but EC2 Intances has no left Resources so It will take the Maximum size from Autoscaling Group and automatically create new EC2 Instances to schedule the new Pod . Maximum size is a number of instances the group allowed to scale out to 
+```
+
+**The reason Why defining Max and Min number**
+
+```
+ ----Max----
+
+ - To Save Cost :
+
+  -- Maybe I don't want to pay more certain amount of Servers .
+
+  -- Avoid unexpected and un sustainable costs, especially during sudden traffic spikes or unanticipated high demand
+
+ - Security Reason :
+
+  -- Indication of security or performance issues
+
+  -- Maybe there is a leak in the application that is suddenly using up so much resources, so instead of spinning up more Instances I kept it at certion amount of Instances
+
+  -- I may want to check before allowing more resources
+
+  ----Min----
+
+ - Min number of Instancews should maintain to keep running at all time
+
+ - Ensure Application maintain baseline of Availability, Performance and Reliability
+
+ - Fault Tolerance : Reduce risk of downtime caused by unpredictabke failure, such as hardware
+
+ - Avoid Scaling delay : Scaling out take time, especially if instances need to be initialized and configured 
+```
 
 
 
