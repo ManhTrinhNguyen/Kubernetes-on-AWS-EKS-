@@ -743,6 +743,8 @@ Step 8 : Deploy my App on Cluster
  - First: Autoscaling Group (Can change Min and Max anytime)
 
  - Second : Create a Role for my NodeGroup . For the autoscaling to work, I need to give the EC2 Instances inside the Worker Node certain permission to make AWS API calls
+
+ - Third : Deploy Cluster AutoScaler 
 ```
 
 **Create custom Policy for my NodeGroup**
@@ -755,11 +757,91 @@ Step 8 : Deploy my App on Cluster
  - After Policy created . Attach it to a WorkerNode IAM Role 
 ```
 
-**Configure Tags on Autoscaling Group**
+**Configure Tags on Autoscaling Group . Automate created by AWS**
 
 ```
- - Tags are also use in order for different Services or Component to Read and Detect some Information from each other . This is one of the case where we have Tags that auto scaler that we will deploy inside Kubernetes will require to auto discover auto scaling group in the AWS account . So the Cluster Autoscaler Component, which I gonna deploy inside Kubernetes Cluster, needs to communicate with auto scaling group . For this communication to happen the Cluster auto Scaler first needs to detect the auto scaling group from AWS . And it happen by using these 2 tags : k8s.io/cluster-autoscaler/eks-cluster-test, k8s.io/cluster-autoscaler/enable
+ - Tags are also use in order for different Services or Component to Read and Detect some Information from each other . This is one of the case where we have Tags that auto scaler that we will deploy inside Kubernetes will require to auto Discover Autoscaling group in the AWS account . So the Cluster Autoscaler Component, which I gonna deploy inside Kubernetes Cluster, needs to communicate with auto scaling group . For this communication to happen the Cluster auto Scaler first needs to detect the auto scaling group from AWS . And it happen by using these 2 tags : k8s.io/cluster-autoscaler/eks-cluster-test, k8s.io/cluster-autoscaler/enable
 ```
+
+**Deploy Cluster Autoscaler**
+
+```
+ - Using : kubectl apply -f <Autoscaler-Deployment-file> : ( https://raw.githubusercontent.com/kubernetes/autoscaler/master/cluster-autoscaler/cloudprovider/aws/examples/cluster-autoscaler-autodiscover.yaml )
+
+ - In that Yamlfile :
+
+  -- In the command part I have the Configuration where NodeGroup auto discover is configured using these tags : --node-group-auto-discovery=asg:tag=k8s.io/cluster-autoscaler/enabled,k8s.io/cluster-autoscaler/<YOUR CLUSTER NAME>
+
+ - To check my Deployment : kubectl get deployment -n kube-system cluster-autoscaler
+
+ - I want to change something in the Deployment file I can use :  kubectl edit deployment -n kube-system cluster-autoscaler
+
+   - Edit annotation : cluster-autoscaler.kubernetes.io/safe-to-evict: "false"
+
+   - In the command part change <Your Cluster Name> to actual cluster name
+
+   - Change Image version : Image version have to match with EKS Cluster Version
+
+ - To check pods in kube-system namespace : kubectl get pod -n kube-system
+
+  - In Kube-system For each Node I have these processes : KubeProxy (One of Worker Proccess) and awsNodes proccesses run on each Nodes, , DNScore no need to sit on every Nodes . Also I can see autoScaler pod run in one of Intances as well
+
+  - If I add another Node these awsNoes and KubeProxy Pods will get scheduled on the new Node as well
+
+ - To see Which Instances run the Autoscaler : `kubectl get pods -n kube-system <autoscaler-pod-name> -o wide`, then I get the Node name so I can see its logs : `kubectl logs <Node-name>` .
+ - To make a logs easier to read : `kubectl logs <Node-name> > as-logs.txt`
+
+  - In the Logs I can see couple of time of Caculating no need Node, Scale down started , No candidate for Scale Down
+
+  - To test it I change the Autoscaling Group min to 1 . Once the NodeGroup Configuration get Updated and the Autoscaler run again to reevalute the status . I can see that NodeGroup will scale to down to just 1 Instances . Now that Autoscaler has run again with a new configuration .
+
+   - After the Configuration changed to Autoscaler started scale down processes . Here I see autoscaler will check out the Nodes in the AutoScaling Group and as part of the Scale down processes, it will actually analyze when the Instaces were last used . After this evaluation, the Preparing for removing this Nodes will actually get started . And I can see a Auto Scaling Pod from my Cluster is being moved to another Node. So Autoscaler decided lets move the Node right here, which happen to be the First one of the two and the AutoScaler itself was scheudeded in that Node so it need to move that Pod to another Node
+
+   - Also at the begining each EC2 Instances or Worker Node has its own default process running there . These processes are there when EC2 initilized and these are Kubernetess Processes
+
+   - Toward down the part of Logs . The pod are actually get deleted as part of the process so I can see this Clean up message
+
+ ----Advantage----
+
+ - Save cost when I am not using using the capacity of EC2 Insanctes it will get removed
+
+ - However the trade-of of that whenever I need a new EC2 instances It will take time to shedule new Pod
+```
+
+**Deploy Nginx Application**
+
+ - Now I have my EKS Cluster Up and Running .
+
+ - Step 1 : Create Deployment and Service for Nginx
+
+  - Image name: nginx
+    
+  - containerPort : 80
+    
+  - Service Type: LoadBalancer . I am creating external Service in Kubernetes Cluster that will have AWS LoadBalancer attached to it bcs everytime I create a service type of Loadbalancer, Kubernetes spin up a native Load balancer from the Cloud Platform depend on which Platform I use . So that LoadBalancer will become a EntryPoint
+
+ - Step 2 : `kubectl apply -f <Configuration-yaml file>`
+
+ - Step 3 : Check that Pod is running fine or not : `kubectl get pods`
+
+  - If there is an Error when starting up the Pods I can use : `kubectl logs <pods-name>`
+
+  - To see processes of the Pods I can use : `kubectl describe pods <Pods-name>`
+
+ - Step 4 : Check Service : `kubectl get svc`
+
+  - Bcs of the Service type is LoadBalancer so K8 will automatic create external IP (external access URL) and internal IP also a NodePort (Range : 30000 - 32722)
+
+  - Nodeport will sit on top of every Worker Node
+
+  - In the EC2 isntances in the UI . I go to loadbalancer section . A Loadbalancer get automatically created when a Service with loadbalancer type got Created . 
+
+
+
+
+
+
+
 
 
 
