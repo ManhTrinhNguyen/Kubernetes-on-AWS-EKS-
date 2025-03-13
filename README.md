@@ -745,8 +745,21 @@ Step 8 : Deploy my App on Cluster
  - Second : Create a Role for my NodeGroup . For the autoscaling to work, I need to give the EC2 Instances inside the Worker Node certain permission to make AWS API calls
 ```
 
+**Create custom Policy for my NodeGroup**
 
+```
+ - IAM -> go to Policy -> go to Create Policy -> Choose JSON then paste the custom list of Policy in there -> Then give it a name and create it
 
+ - Custome list is the one that has a list of all the Permissions that we need to give NodeGroup IAM role for the autoscaling to work
+
+ - After Policy created . Attach it to a WorkerNode IAM Role 
+```
+
+**Configure Tags on Autoscaling Group**
+
+```
+ - Tags are also use in order for different Services or Component to Read and Detect some Information from each other . This is one of the case where we have Tags that auto scaler that we will deploy inside Kubernetes will require to auto discover auto scaling group in the AWS account . So the Cluster Autoscaler Component, which I gonna deploy inside Kubernetes Cluster, needs to communicate with auto scaling group . For this communication to happen the Cluster auto Scaler first needs to detect the auto scaling group from AWS . And it happen by using these 2 tags : k8s.io/cluster-autoscaler/eks-cluster-test, k8s.io/cluster-autoscaler/enable
+```
 
 
 
