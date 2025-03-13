@@ -737,9 +737,13 @@ Step 8 : Deploy my App on Cluster
  - Avoid Scaling delay : Scaling out take time, especially if instances need to be initialized and configured 
 ```
 
+**Things need to do in order to configure Autoscaler**
 
+```
+ - First: Autoscaling Group (Can change Min and Max anytime)
 
-
+ - Second : Create a Role for my NodeGroup . For the autoscaling to work, I need to give the EC2 Instances inside the Worker Node certain permission to make AWS API calls
+```
 
 
 
