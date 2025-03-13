@@ -824,17 +824,26 @@ Step 8 : Deploy my App on Cluster
 
  - Step 3 : Check that Pod is running fine or not : `kubectl get pods`
 
-  - If there is an Error when starting up the Pods I can use : `kubectl logs <pods-name>`
-
-  - To see processes of the Pods I can use : `kubectl describe pods <Pods-name>`
+   - If there is an Error when starting up the Pods I can use : `kubectl logs <pods-name>`
+ 
+   - To see processes of the Pods I can use : `kubectl describe pods <Pods-name>`
 
  - Step 4 : Check Service : `kubectl get svc`
 
-  - Bcs of the Service type is LoadBalancer so K8 will automatic create external IP (external access URL) and internal IP also a NodePort (Range : 30000 - 32722)
+   - Bcs of the Service type is LoadBalancer so K8 will automatic create external IP (external access URL) and internal IP also a NodePort (Range : 30000 - 32722)
+  
+     <img width="500" alt="Screenshot 2025-03-13 at 15 19 26" src="https://github.com/user-attachments/assets/63e2d09d-a2b5-46f9-8731-01dd572e117b" />
 
-  - Nodeport will sit on top of every Worker Node
+   - In the Configuration Port in AWS UI . Port 80 forwarding to Port 32088
+    
+     - Port 80 : is a Default http Port . This is a Port where LoadBalancer accessible at and then it does a internal forwarding to a NodePort 
+    
+     - Port 32088 : is a NodePort sit on every Worker Node . And then from here it will go to Service Port (which is port 80 again I configured) . and then it will go to container Port (Which is port 80 again) 
+    
 
-  - In the EC2 isntances in the UI . I go to loadbalancer section . A Loadbalancer get automatically created when a Service with loadbalancer type got Created . 
+   - Nodeport will sit on top of every Worker Node . However bcs I am not using the external IP of the Worker Nodes . I can directly call it use DNS name and it will then in the background forwarding between those Ports 
+ 
+   - In the EC2 isntances in the UI . I go to loadbalancer section . A Loadbalancer get automatically created when a Service with loadbalancer type got Created . 
 
 
 
