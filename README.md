@@ -782,7 +782,7 @@ Step 8 : Deploy my App on Cluster
 
    - Change Image version : Image version have to match with EKS Cluster Version
 
-   - In the Command level add : --balance-similar-node-groups and --skips-nodes-with-system-pods=false
+   - In the Command level add : --balance-similar-node-groups and --skip-nodes-with-system-pods=false
 
  - To check pods in kube-system namespace : kubectl get pod -n kube-system
 
