@@ -814,11 +814,11 @@ Step 8 : Deploy my App on Cluster
 
  - Step 1 : Create Deployment and Service for Nginx
 
-  - Image name: nginx
-    
-  - containerPort : 80
-    
-  - Service Type: LoadBalancer . I am creating external Service in Kubernetes Cluster that will have AWS LoadBalancer attached to it bcs everytime I create a service type of Loadbalancer, Kubernetes spin up a native Load balancer from the Cloud Platform depend on which Platform I use . So that LoadBalancer will become a EntryPoint
+   - Image name: nginx
+     
+   - containerPort : 80
+     
+   - Service Type: LoadBalancer . I am creating external Service in Kubernetes Cluster that will have AWS LoadBalancer attached to it bcs everytime I create a service type of Loadbalancer, Kubernetes spin up a native Load balancer from the Cloud Platform depend on which Platform I use . So that LoadBalancer will become a EntryPoint
 
  - Step 2 : `kubectl apply -f <Configuration-yaml file>`
 
@@ -845,9 +845,14 @@ Step 8 : Deploy my App on Cluster
  
    - In the EC2 isntances in the UI . I go to loadbalancer section . A Loadbalancer get automatically created when a Service with loadbalancer type got Created . 
 
+   - Another Point : At the beginning when I define VPC for my Worker Node I have defined 2 Public and 2 Private Subnet and a Loadbalancer is mean to be accessible from external Request so It will be schedule in Public Subnet
+  
+   - !!! NOTE : External Component like LoadBalancer they will got Public and Private IP address . Private for internal communication and Public for external communication
+  
+   - Another point : In Load Balancing Configuration I can see EC2 Instances that this Load Balancer load balances traffic to . In Instances ID I can see all the EC2 
+Instances that is Worker Nodes behinds this load balancer
 
-
-
+   - And in AWS there is a requirement for loadbalancer to have at least one EC2 in at least 2 different AZ 
 
 
 
