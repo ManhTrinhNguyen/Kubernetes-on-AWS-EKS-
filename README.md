@@ -856,6 +856,68 @@ Instances that is Worker Nodes behinds this load balancer
 
    - And in AWS there is a requirement for loadbalancer to have at least one EC2 in at least 2 different AZ 
 
+## Create EKS Cluster with Fargate Profile
+
+**Introduce to Fargate**
+
+ - I have run my Application on EC2 instances manage by NodeGroup that is connected to a Cluster. As a alternative I can also work with Fargate
+
+ - Fargate is a Serverless way of deploying containers and creating Pods in the Cluster . Fargate AWS will provision and run, manage the Application for me in AWS managed account
+
+**Improtant note different between Fargate and EC2**
+
+ - When we create Pods using Fargate . Fargate will provision its own virtual machine for each Pod, So we will have as many Virtual Machine as we have a Pod . On EC2 Instances however I can have multiple Pod running. And this different or this characteristic of Fargate actually have some limitation for what we can deploy through Fargate . For example deploying Statefull Application or Daemon Set that are basically applications that will run on every Node are not gonna be possible through Fargate .
+
+### Create Fargate
+
+ - I can have both Worker Node and Fargate attach to one Cluster
+
+**Create IAM Role for Fargate**
+
+ - When my Cluster create Pods on AWS Fargate, the Kubelet on the Virtual Machine will provision for us, will need to make call to a AWS APIs on my behalf. It will need to connect to my VPC, provision some Resources, Virtual Machine, pull the container images from ECR . So I will create a role that will permit Virtual Machine provision by Fargate to do all this stuff .
+
+ - Go to IAM -> Create Role -> Choose EKS -> Choose EKS - Fargate Pod -> Give it a name
+
+**Create Fargate Profile**
+
+ - The way it work is Fargate profile create a rule. Whenever I tell Fargate here is the Pods configuration, Fargate base on the profile rules and what I defined wheather that Pod should be sheduler through Fargate .
+
+ - So Fargate Profile lets us define the criteria to decide, how the new Pod should be schedule
+
+ - Go to Fargate Profile in EKS cluster .
+
+  - **Profile Configuration** : Create name, Attach role for Fargate, And also Subnets of VPC I defined for Worker Node
+
+   - !!! Note : If Fargate is going to provision virtual machine on AWS managed Account and I am not gonna see any EC2 or Virtual Machine on our Account . Why do I need to provide my own VPC ? The reason is the Pod that will get schedule using Fargate will get an IP Address and that IP Address will be from the range that our Subnet have . So our VPC and Subnet networking Infomation will actually be used to schedule the Pod.
+ 
+   - !!! Note : Also AWS removed the Public Subnet bcs Fargate will need to create a Pod only in a Private Subnet . I have the Private Subnet and Public Subnet in 2 different AZ so external Components like external Load Balancer belonging to AWS can be create in Public Subnet and internal Component like Pod can be create in Private Subnet.
+
+  - **Configure Pod Selection** : We need sometype of Selectors that will tell Fargate this Pod is meant to be schedule by Fargate .
+
+   - Using Namespace infomation in the Configuration Yaml I can create Fargate rule or Fargate profile that defines a Namespace selectors for a Pods . If I type the name in Namespace Fargate will read the configuration when I try to deploy it using Kubectl apply and it will check wheather the Pods configuration has a namespace dev defined . If it does then Fargate will decide this is a Pod I need to schedule through Fargate . If not it will handover to be schedule on one of the EC2 instances in my NodeGroup
+
+   - Another thing I need to configure is Label Selectors .
+
+    - In the Labels Section I can add multiple key:value pair lables 
+
+   ----Examole Use Case - having both NodeGroup and Fargate----
+
+   - I could decide to split a DEV and TEST environment inside the same EKS Cluster . So I can create Test environment in Node Group and Dev Environment in Fargate . In this case I can tag Pod with the respective Selector or Lables or Namespace so that Pod has Namespace Dev will schedule on Fargate, and one not have Dev Namespace will be schedule in Node Group.
+
+   - Another use case is Fargate has Limitation in term of what Kubernetes component can deploy (Can not deploy Deamon Set for Logging, or Statefull App). In this case it might make sense to have NodeGroup or EC2 instances for Stateful Apps and use Fargate profile for Stateless Apps 
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
