@@ -924,9 +924,25 @@ Instances that is Worker Nodes behinds this load balancer
    - So Fargate is a Virtual Machine provisioned outside our account, we don't see that and don't even have access to it bcs it completely manage by AWS   
 
 
+## EKS Cluster with eksctl CLI 
+
+**eksctl**
+
+ - CLI tools for working with EKS Cluster that automates many individual Tasks
+
+**Install eksctl and connect to AWS account**
+
+ - Install eksctl
+
+ ```
+  brew tap weaveworks/tap
+  brew install weaveworks/tapeksctl
+ ```
+
+ - When eksctl installed I have to configure AWS Credentials : `aws configure list`
 
 
-
+**Create EKS Cluster**
 
 
 
