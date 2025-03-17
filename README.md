@@ -950,7 +950,7 @@ Instances that is Worker Nodes behinds this load balancer
  eksctl create cluster \
  --name eks-cli
  --version 1.32 \
- --region us-west-1
+ --region us-west-1 \
  --nodegroup-name demo-nodes \
  --node-type t2.micro \
  --nodes 2 \
@@ -958,11 +958,72 @@ Instances that is Worker Nodes behinds this load balancer
  --nodes-max 3
  ```
 
- - Create yaml config file 
+   - This command will take sometime 
 
+ - Alternative way Create yaml config file 
 
+ ```
+ apiVersion: eksctl.io/v1alpha5
+ kind: ClusterConfig
+ 
+ metadata:
+   name: basic-cluster
+   region: eu-north-1
+ 
+ nodeGroups:
+   - name: ng-1
+     instanceType: m5.large
+     desiredCapacity: 10
+   - name: ng-2
+     instanceType: m5.xlarge
+     desiredCapacity: 2
+ ```
 
+**Review created EKS Cluster**
 
+ - Cluster was created
+
+ - Deploying Demo Cluster
+
+ - Deploying NodeGroup Stack
+
+ - Kubeconfig automatically configure and saved in `kube/config`
+
+ - kubectl installed
+
+**What get created in AWS Account**
+
+ - IAM Roles :
+
+   - EKS-Cluster-NodeGroup role : AmazonEC2ContainerRegistryReadOnly, AmazonEKS_CNI_Policy, AmazonEKSWorkerNodePolicy, AmazonSSMManagedInstanceCore
+  
+   - EKS-Cluster-Service role : This is a Policy give AWS Managed Account permission to do stuff in my AWS Account . AmazonEKSClusterPolicy, AmazonEKSVPCResourceController,
+  
+   - I have AWS managed policy which let AWS manage some of EKS network resources on my behalf
+  
+   - I have AWSServiceRoleforAutoScaling and AWSServiceRoleForAmazonEKS
+  
+   - NOTE : eksctl does a lot of stuff in the background . Configuring some of additional stuff
+  
+ - VPC :
+ 
+   - Public and Private Subner get created
+  
+ - EKS :
+
+   - 2 Node got listed
+  
+   - We don't see the Control Plane Nodes AWS Managed
+  
+   - Processes are running on those Worker Nodes is : coreDNS, Kubeproxy , awsNode processes, kubelet, AWS VPC CNI
+  
+     - aws-nodes process: Let the Worker Nodes with the Control Plane Nodes on AWS account
+    
+     - kubelet: Communicate with API-server, Start the shedule Pod, continusly monitor Nodes'heath , manage lifecycle Pod
+    
+     - AWS VPC CNI : Manage Networking . Assign Elastic Nerwork Interface and IP Address to Pods . Ensure network communication betweens pods and external Service 
+
+   - I also have Public endpoint of EKS Cluster 
 
 
 
