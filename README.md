@@ -944,6 +944,21 @@ Instances that is Worker Nodes behinds this load balancer
 
 **Create EKS Cluster**
 
+ - Create EKS by using CLI
+
+ ```
+ eksctl create cluster \
+ --name eks-cli
+ --version 1.32 \
+ --region us-west-1
+ --nodegroup-name demo-nodes \
+ --node-type t2.micro \
+ --nodes 2 \
+ --nodes-min 1 \
+ --nodes-max 3
+ ```
+
+ - Create yaml config file 
 
 
 
