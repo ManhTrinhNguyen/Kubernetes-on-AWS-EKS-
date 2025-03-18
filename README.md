@@ -1045,7 +1045,61 @@ Instances that is Worker Nodes behinds this load balancer
   
  - Step 4 : Add AWS credentials on Jenkins for AWS account authentication
 
-   - I have AWS User that I use to create a Cluster, and each User on AWS has an access key ID and Secret access key, I need these credentials in order to connect to our Cluster . 
+   - I have AWS User that I use to create a Cluster, and each User on AWS has an access key ID and Secret access key, I need these credentials in order to connect to our Cluster .
+  
+ - Step 5 : Adjust Jenkinsfile to configure EKS cluster deployment
+
+
+### Step 1 : Install kubectl inside Jenkins Container
+
+ - Connect to a Server : `ssh root@...`
+
+ - Check running Container : `docker ps`
+
+ - Go inside Jenkins container as a Root User bcs Jenkins doesn't admin permission : `docker exec -it -u 0 <container-id> bash`
+
+ - Inside Jenkins container install kubectl, make it executable and move it to /usr/local/bin/kubectl : `curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl; chmod +x ./kubectl; mv ./kubectl /usr/local/bin/kubectl`
+
+   - As I learned in Jenkins Moudule . Whenever I need some CLI tools execute commands with inside our Pipelines I can install them directly on a Jenkins Server or inside a Jenkins container and they will be available as Linux Command inside the Pipeline I can execute them pretty simply .
+  
+
+### Install AWS IAM Authenticator 
+
+ - This is Specific to AWS . When I created EKS Cluster I got a Kubeconfig which contain for the Secret and all the certificate for authenticating and connecting, it also container the infomation to a Cluster on AWS specificly to EKS Cluster . So I will provide all the credentials 
+
+ - Install aws-iam-authentocator, make it executable and move it to /usr/local/bin :
+ ```
+ curl -Lo aws-iam-authenticator https://github.com/kubernetes-sigs/aws-iam-authenticator/releases/download/v0.6.11/aws-iam-authenticator_0.6.11_linux_amd64
+
+ chmod +x ./aws-iam-authenticator
+
+ mv ./aws-iam-authenticator /usr/local/bin
+ ```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
