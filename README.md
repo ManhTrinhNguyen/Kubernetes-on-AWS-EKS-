@@ -1122,7 +1122,33 @@ Instances that is Worker Nodes behinds this load balancer
 
 ### Step 4 : Create AWS Credentials 
 
+ - Need Credentials for AWS Users . Locally I have work with the Admin User which is AWS User with its own secret key ID and access key . I need to configure the same for Jenkins
 
+ - NOTE : I don't have to use Admin User to execute command on Jenkins . Best practice would be Create AWS IAM Jenkins User for different Services that Jenkins connect to and needs to authenticate to including Docker Repos, AWS, Kubernetes and so on. And I can give that User Limited Permission for security Reason
+
+ - Inside Jenkins UI . Inside mutiple Branches Pipeline -> Go to Credentials -> Add Credentials -> Choose Secret Text
+
+   - I will create 2 Credentials : access_key_id and secret_key_id
+
+   - Locally my Credentials live here : `.aws/credentials`
+  
+### Step 5 : Create Jenkins file 
+
+ - I can execute kubectl bcs bcs I have it installed inside my Jenkins Container . With kubectl execution aws-iam-authenticator also execute in the background
+
+ - Before kubectl execute success I need to set or export ENV that will be use in that connection . I am setting those 2 ENV as a Context for the kubectl command to execute bcs in the background IAM will be executed an that command will need Access Credentials to connect to AWS  . Bcs I don't have .aws/config so I have to config like this . S
+
+    ```
+     AWS_ACCESS_KEY_ID
+
+     AWS_SECRECT_ACCESS_KEY
+
+    ----Sumarize----
+
+    - Kubectl get executed which will use kubeconfig files created in .kube/config and inside that config file it is configure that aws-IAM-authenticator need to be use in order to authenticate with AWS account . And when aws-iam-authenticator command get trigger in the background, it need AWS_ACCESS_KEY and AWS_SECRET_ACCESS_KEY (AWS Credentials)
+    ```
+
+    - !!! NOTE : This part of authentication where I need the aws-iam-authenticator and setting AWS-crenditals in addition to Kubernetes Authentication it acctually specific to AWS . Other platform will have different way to authenticate 
 
 
 
