@@ -1025,9 +1025,27 @@ Instances that is Worker Nodes behinds this load balancer
 
    - I also have Public endpoint of EKS Cluster 
 
+## Deploy EKS Cluster from Jenkins Pipeline 
 
+**Steps I need to Configure**
 
+ - Step 1 : Install kubectl inside Jenkins Container
 
+ - Step 2 : Install aws-iam-authenticator tool inside Jenkins Container
+
+   - When I try to connect to the Kubernetes Cluster on AWS I need to authenticate not only with Kubernetes cluster, but also with AWS bcs the Cluster is running on AWS account
+  
+ - Step 3 : Create Kubeconfig file to connect to EKS Cluster
+
+   - This is a alternative to creating credentials inside Jenkins, now I go inside Jenkins Container directly and we gonna create a Config file that will contain all the infomation it needs in order to authenticate with AWS account using aws-iam-authenticator also EKS cluster I have created
+  
+   - This kubeconfig file is the same file that we are using locally to execute kubectl commands. On local machine when I created EKS Cluster this `kube/config.json` file automatically got generated this config file contain all the infomation that needs to authenticate to EKS
+  
+   - When I install EKS by using eksctl tools it automatically installed aws-iam-authenticator
+  
+ - Step 4 : Add AWS credentials on Jenkins for AWS account authentication
+
+   - I have AWS User that I use to create a Cluster, and each User on AWS has an access key ID and Secret access key, I need these credentials in order to connect to our Cluster . 
 
 
 
