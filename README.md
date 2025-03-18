@@ -1120,7 +1120,7 @@ Instances that is Worker Nodes behinds this load balancer
  - Then copy config file from host to Jenkins : `docker cp config container-id:/var/jenkins_home/.kube/`
 
 
-
+### Step 4 : Create AWS Credentials 
 
 
 
