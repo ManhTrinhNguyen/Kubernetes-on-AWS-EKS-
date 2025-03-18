@@ -1063,11 +1063,12 @@ Instances that is Worker Nodes behinds this load balancer
    - As I learned in Jenkins Moudule . Whenever I need some CLI tools execute commands with inside our Pipelines I can install them directly on a Jenkins Server or inside a Jenkins container and they will be available as Linux Command inside the Pipeline I can execute them pretty simply .
   
 
-### Install AWS IAM Authenticator 
+### Step 2 : Install AWS IAM Authenticator 
 
- - This is Specific to AWS . When I created EKS Cluster I got a Kubeconfig which contain for the Secret and all the certificate for authenticating and connecting, it also container the infomation to a Cluster on AWS specificly to EKS Cluster . So I will provide all the credentials 
+ - This is Specific to AWS . When I created EKS Cluster I got a Kubeconfig which contain for the Secret and all the certificate for authenticating and connecting, it also container the infomation to a Cluster on AWS specificly to EKS Cluster . So I will provide all the credentials, however I need kubectl and aws-iam-authenticator both to acctually connect to EKS cluster and authenticate to it from Jenkins
 
  - Install aws-iam-authentocator, make it executable and move it to /usr/local/bin :
+
  ```
  curl -Lo aws-iam-authenticator https://github.com/kubernetes-sigs/aws-iam-authenticator/releases/download/v0.6.11/aws-iam-authenticator_0.6.11_linux_amd64
 
@@ -1076,10 +1077,47 @@ Instances that is Worker Nodes behinds this load balancer
  mv ./aws-iam-authenticator /usr/local/bin
  ```
 
+### Step 3 : Create Kubeconfig file for Jenkins
 
+ - I don't have the editor inside the Jenkins Container bcs it is a lightweight container . I will create the file outside on the Host and I just simple copy the file into Jenkin Container
 
+ - Basic config file contents
 
+ ```
+ apiVersion: v1
+ kind: Config
+ clusters:
+   - name: aws
+     cluster:
+       server: <Server API-Endpoint>
+       certificate-authority-data: <base64-encoded-ca-cert>
+ users:
+   - name: arn:aws:eks:us-west-2:123456789012:cluster/my-cluster
+     user:
+       exec:
+         apiVersion: client.authentication.k8s.io/v1beta1
+         command: /usr/bin/aws-iam-authenticator
+         args:
+           - "eks"
+           - "get-token"
+           - "--cluster-name"
+           - "my-cluster" 
+ contexts:
+   - name: aws
+     context:
+       cluster: kubernetes
+       user: aws
+ ```
 
+ - I need to put in Cluster name
+
+ - I need to put in Server API Endpoint : I can get this from EKS overview in Management Console
+
+ - The other thing I need to chagne is certificate-authority-data : This is something that get generated in EKS Cluster when its gets created and I have that file available on local in `kube/config`
+
+ - When I have the file ready I go inside Jenkins and create kube folder : `docker exec -it <container-id> bash` then `mkdir kube`
+
+ - Then copy config file from host to Jenkins : `docker cp config container-id:/var/jenkins_home/.kube/`
 
 
 
