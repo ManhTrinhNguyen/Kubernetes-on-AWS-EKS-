@@ -693,40 +693,40 @@ Step 8 : Deploy my App on Cluster
 
  - In the Docs in Section B I create IAM Policy for Autoscaling is :
 
-   ```
-   {
-    "Version": "2012-10-17",
-    "Statement": [
-        {
-            "Effect": "Allow",
-            "Action": [
-                "autoscaling:DescribeAutoScalingGroups",
-                "autoscaling:DescribeAutoScalingInstances",
-                "autoscaling:DescribeLaunchConfigurations",
-                "autoscaling:DescribeScalingActivities",
-                "ec2:DescribeImages",
-                "ec2:DescribeInstanceTypes",
-                "ec2:DescribeLaunchTemplateVersions",
-                "ec2:GetInstanceTypesFromInstanceRequirements",
-                "eks:DescribeNodegroup"
-            ],
-            "Resource": [
-                "*"
-            ]
-        },
-        {
-            "Effect": "Allow",
-            "Action": [
-                "autoscaling:SetDesiredCapacity",
-                "autoscaling:TerminateInstanceInAutoScalingGroup"
-            ],
-            "Resource": [
-                "*"
-            ]
-        }
-    ]
-}
-   ```
+ ```
+     {
+      "Version": "2012-10-17",
+      "Statement": [
+          {
+              "Effect": "Allow",
+              "Action": [
+                  "autoscaling:DescribeAutoScalingGroups",
+                  "autoscaling:DescribeAutoScalingInstances",
+                  "autoscaling:DescribeLaunchConfigurations",
+                  "autoscaling:DescribeScalingActivities",
+                  "ec2:DescribeImages",
+                  "ec2:DescribeInstanceTypes",
+                  "ec2:DescribeLaunchTemplateVersions",
+                  "ec2:GetInstanceTypesFromInstanceRequirements",
+                  "eks:DescribeNodegroup"
+              ],
+              "Resource": [
+                  "*"
+              ]
+          },
+          {
+              "Effect": "Allow",
+              "Action": [
+                  "autoscaling:SetDesiredCapacity",
+                  "autoscaling:TerminateInstanceInAutoScalingGroup"
+              ],
+              "Resource": [
+                  "*"
+              ]
+          }
+      ]
+  }
+  ```
 
 **How Auto Scaling work in EKS Cluster**
 
