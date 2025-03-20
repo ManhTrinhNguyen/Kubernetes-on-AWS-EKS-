@@ -681,7 +681,52 @@ Step 8 : Deploy my App on Cluster
  - Control Traffic on Instances Level
 ```
 
-## Configure Auto Scaling in EKS Cluster 
+## Configure Auto Scaling in EKS Cluster  
+
+- Docs (https://github.com/kubernetes/autoscaler/blob/master/cluster-autoscaler/cloudprovider/aws/README.md)
+
+**Create OIDC Provider**
+
+ - OIDC authentication allow Services to assume an IAM role and interact with AWS services without having to store credentials as environment variables .
+
+ - To Create OIDC Provider Docs and use for AutoCluser : (https://github.com/kubernetes/autoscaler/blob/master/cluster-autoscaler/cloudprovider/aws/CA_with_AWS_IAM_OIDC.md)
+
+ - In the Docs in Section B I create IAM Policy for Autoscaling is :
+
+   ```
+   {
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Action": [
+                "autoscaling:DescribeAutoScalingGroups",
+                "autoscaling:DescribeAutoScalingInstances",
+                "autoscaling:DescribeLaunchConfigurations",
+                "autoscaling:DescribeScalingActivities",
+                "ec2:DescribeImages",
+                "ec2:DescribeInstanceTypes",
+                "ec2:DescribeLaunchTemplateVersions",
+                "ec2:GetInstanceTypesFromInstanceRequirements",
+                "eks:DescribeNodegroup"
+            ],
+            "Resource": [
+                "*"
+            ]
+        },
+        {
+            "Effect": "Allow",
+            "Action": [
+                "autoscaling:SetDesiredCapacity",
+                "autoscaling:TerminateInstanceInAutoScalingGroup"
+            ],
+            "Resource": [
+                "*"
+            ]
+        }
+    ]
+}
+   ```
 
 **How Auto Scaling work in EKS Cluster**
 
