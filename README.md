@@ -1231,12 +1231,23 @@ Instances that is Worker Nodes behinds this load balancer
 
 **Configure Jenkinsfile to deploy to LKE cluster**
 
-
   - Create another branch to deploy to LKE Cluster : `git checkout -b deploy-to-LKE`
 
   - Now we have the Credentials for Kubeconfig and we have kubectl command available . How do I tell kubectl how to connect to LKE Cluster or which Cluster to connect to ? . And that come from kubectl CLI plugin that I installed
 
-  - To use that Plugin : `withKubeConfig([credentialsId: 'credentials-id', serverUrl: 'LKE Cluster Enpdpoint']) { sh 'kubectl create deployment'}` . 
+  - To use that Plugin : `withKubeConfig([credentialsId: 'credentials-id', serverUrl: 'LKE Cluster Enpdpoint']) { sh 'kubectl create deployment'}` .
+  
+  - serverUrl : Is tell kubectl where to connect to
+
+
+## Credentials on Jenkins 
+
+
+ - 1 thing from configuring credentials in Jenkins . As I saw in our example I have configured credentials for EC2 instances inside Jenkins so I could deploy on EC2 Server . I have have also configure Kubernetes credentials as kubeconfig file to connect  to K8 Cluster
+
+ - Better Alternative is Create Jenkins user on EC2 server or whatever remote server, and for that Jenkins server there will be a Linux Server on that Instance, and for that Jenkins User basically to create credentials with its private key .
+
+ - Same way created Kubernetes credential using Kubeconfig that Kubernetes admin user is using . So basically have all the Permission to execute stuff and configure stuff in Kubernetes . An Alternative here would be to create a Jenkins user in Kubernetes . In Kubernetes user are called Service Account . So basically create a Jenkins Service account and give it only the Permission that Jenkins needs which is just deploying a new Application , create deployment kind and maybe some other stuff . For example if it doesn't need to delete anything I may limit permission of the Jenkins service account and then I would create Credentials for Jenkins user inside K8 Cluster with user token 
 
 
 
