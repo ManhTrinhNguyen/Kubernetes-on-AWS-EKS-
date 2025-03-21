@@ -1070,7 +1070,7 @@ Instances that is Worker Nodes behinds this load balancer
 
    - I also have Public endpoint of EKS Cluster 
 
-## Deploy EKS Cluster from Jenkins Pipeline 
+## Deploy to EKS Cluster from Jenkins Pipeline 
 
 **Steps I need to Configure**
 
@@ -1178,6 +1178,8 @@ Instances that is Worker Nodes behinds this load balancer
    - Locally my Credentials live here : `.aws/credentials`
   
 ### Step 5 : Create Jenkins file 
+
+<img width="600" alt="Screenshot 2025-03-21 at 10 56 21" src="https://github.com/user-attachments/assets/c59995c3-dc95-43b8-8c82-6ab3dbe0d125" />
 
  - I can execute kubectl bcs bcs I have it installed inside my Jenkins Container . With kubectl execution aws-iam-authenticator also execute in the background
 
