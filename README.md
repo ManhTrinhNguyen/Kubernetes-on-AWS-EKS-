@@ -1197,7 +1197,46 @@ Instances that is Worker Nodes behinds this load balancer
 
     - !!! NOTE : This part of authentication where I need the aws-iam-authenticator and setting AWS-crenditals in addition to Kubernetes Authentication it acctually specific to AWS . Other platform will have different way to authenticate 
 
+## Deploy to LKE Cluster from Jenkins Pipelines
 
+**Steps need to configure**
+
+- Step 1 : Having Kubectl command line tools inside Jenkins Container
+
+- Step 2 : Install Jenkins plugin that will make it possible for us to execute Kubectl with kubeconfig credentials
+
+ - Instead of create kubeconfig of Linode Kubernetes Cluster inside the Jenkins container . I will configure it as a credentials inside Jenkins bcs it is a different type of Config file we can actually use that as a credentials, unlike AWS config file, which was more reliant on the authenticator in addition .
+
+ - Once we have that Credentials of Kube config file , I will use the Plugin inside my Jenkinsfile so using plugin I can execute the Kubectl command that will deploy nginx deployment and pod inside the Linode Cluster
+
+**Create Kubernetes Cluster on Linode and connect to it**
+
+ - The reason why K8 Cluster on Linode so easy to create and get start with and also so fast is that AWS has much more granular control of the infrastructure, AWS has much more thing that I can able to configure when creating instances and create K8 on AWS . For example the VPC concepts and whole networking and private, public subnets
+
+ - Step 1 : Go to Linode and Create K8 Cluster
+
+ - Step 2: Once Cluster created I have Kubeconfig file that I can download . This Kubeconfig file will help me to connect to Cluster using Kubectl Command
+
+**Add LKE credentials on Jenkins**
+
+ - Go to multiple Branch Pipeline -> Credentails -> Choose Secret File -> Download the kubeconfig file to it
+
+**Install Kubernetes CLI Plugin on Jenkins**
+
+ - Install Jenkins Plugin that allow me to connect this kubectl to an actual Cluster
+
+ - In Jenkins Plugin -> Available Plugin -> Kubernetes CLI
+
+ - And some of dependency plugin also need to installed first, before installation can complete . So I will need to restart my Jenkins
+
+**Configure Jenkinsfile to deploy to LKE cluster**
+
+
+  - Create another branch to deploy to LKE Cluster : `git checkout -b deploy-to-LKE`
+
+  - Now we have the Credentials for Kubeconfig and we have kubectl command available . How do I tell kubectl how to connect to LKE Cluster or which Cluster to connect to ? . And that come from kubectl CLI plugin that I installed
+
+  - To use that Plugin : `withKubeConfig([credentialsId: 'credentials-id', serverUrl: 'LKE Cluster Enpdpoint']) { sh 'kubectl create deployment'}` . 
 
 
 
