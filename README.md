@@ -981,7 +981,7 @@ Instances that is Worker Nodes behinds this load balancer
 
  ```
   brew tap weaveworks/tap
-  brew install weaveworks/tapeksctl
+  brew install weaveworks/tap/eksctl
  ```
 
  - When eksctl installed I have to configure AWS Credentials : `aws configure list`
