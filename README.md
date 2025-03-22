@@ -1005,7 +1005,9 @@ Instances that is Worker Nodes behinds this load balancer
 
    - This command will take sometime 
 
- - Alternative way Create yaml config file 
+ - Alternative way Create yaml config file . The advantage of using Yaml file is I will have history of what I created I can just repeat it instead of just saving the command somewhere . If the Configuration complex and big it is way easier to configure in Yaml file
+
+ - Eksctl is not just for create a Cluster . It is also for Managing and Configuring after Cluster created 
 
  ```
  apiVersion: eksctl.io/v1alpha5
