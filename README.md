@@ -1064,11 +1064,13 @@ Instances that is Worker Nodes behinds this load balancer
   
    - Processes are running on those Worker Nodes is : coreDNS, Kubeproxy , awsNode processes, kubelet, AWS VPC CNI
   
-     - aws-nodes process: Let the Worker Nodes with the Control Plane Nodes on AWS account
+     - aws-nodes process: Let the Worker Nodes communicate with the Control Plane Nodes on AWS account
     
-     - kubelet: Communicate with API-server, Start the shedule Pod, continusly monitor Nodes'heath , manage lifecycle Pod
+     - kubelet (in the OS level of every Nodes): Communicate with API-server, Start the shedule Pod, continusly monitor Nodes'heath , manage lifecycle Pod
     
-     - AWS VPC CNI : Manage Networking . Assign Elastic Nerwork Interface and IP Address to Pods . Ensure network communication betweens pods and external Service 
+     - AWS VPC CNI : Manage Networking . Assign Elastic Nerwork Interface and IP Address to Pods . Ensure network communication betweens pods and external Service
+    
+     - kubeproxy and core DNS are nessesary to run schedule Pod to configure Services etc ...
 
    - I also have Public endpoint of EKS Cluster 
 
