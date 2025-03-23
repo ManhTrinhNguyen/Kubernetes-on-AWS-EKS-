@@ -1253,6 +1253,39 @@ Instances that is Worker Nodes behinds this load balancer
 
  - Same way created Kubernetes credential using Kubeconfig that Kubernetes admin user is using . So basically have all the Permission to execute stuff and configure stuff in Kubernetes . An Alternative here would be to create a Jenkins user in Kubernetes . In Kubernetes user are called Service Account . So basically create a Jenkins Service account and give it only the Permission that Jenkins needs which is just deploying a new Application , create deployment kind and maybe some other stuff . For example if it doesn't need to delete anything I may limit permission of the Jenkins service account and then I would create Credentials for Jenkins user inside K8 Cluster with user token 
 
+### Complete CI/CD Pipeline with EKS And Dockerhub  
+
+**Pipeline from previous module**
+
+<img width="600" alt="Screenshot 2025-03-23 at 12 04 44" src="https://github.com/user-attachments/assets/4d4c518f-1bfb-4403-b290-ae4290fcd860" />
+
+- Version incrementation : give me new Image version everytime I run the Pipeline .
+
+- Build Application : Create new Jar file with a new Version
+
+- Build Docker Image
+
+- Deploy Stage 
+
+- Commit Version Increment into a Git Repo .
+
+**Create Deployment and Service and Adjust Jenkins**
+
+- Couple things that need for a Pipeline to deploy Image on Kubernetes
+
+ - Frist : I need Kubernetes Configuration for my applications's deployment and service . Everytime I want to deploy a new version of my Application I need to create Deployment and Service
+
+ - Second : I am generating new Image everytime pipelines runs . The Image name is actually dynamic . I need to set Image dynamically in K8s config file
+
+  - To set image in deployment file : `<my-docker-hub-repo>:$IMAGE_NAME` . This is a ENV that I set in a Jenkinsfile .
+  
+  - Also set `imagePullPolicy : always` always set a new Image when the Pod start no matter that specific Image available in that Local
+
+  - Also set Apps name bcs it repeat multiple times in the file : `$APP_NAME` .
+
+  - In Jenkinsfile . I set `$IMAGE_NAME` as a ENV in the Version Incrementation Stage . Now I will also set `$APP_NAME` as a ENV in the Deploy Stage (can be in Global) .
+
+
 
 
 
