@@ -1277,13 +1277,48 @@ Instances that is Worker Nodes behinds this load balancer
 
  - Second : I am generating new Image everytime pipelines runs . The Image name is actually dynamic . I need to set Image dynamically in K8s config file
 
-  - To set image in deployment file : `<my-docker-hub-repo>:$IMAGE_NAME` . This is a ENV that I set in a Jenkinsfile .
+   - To set image in deployment file : `<my-docker-hub-repo>:$IMAGE_NAME` . This is a ENV that I set in a Jenkinsfile .
+   
+   - Also set `imagePullPolicy : always` always set a new Image when the Pod start no matter that specific Image available in that Local
+ 
+   - Also set Apps name bcs it repeat multiple times in the file : `$APP_NAME` .
+ 
+   - In Jenkinsfile . I set `$IMAGE_NAME` as a ENV in the Version Incrementation Stage . Now I will also set `$APP_NAME` as a ENV in the Deploy Stage (can be in Global) by using `environment{}` blocks.
   
-  - Also set `imagePullPolicy : always` always set a new Image when the Pod start no matter that specific Image available in that Local
+**How to pass Values from Jenkinsfile to Yaml file ?**
 
-  - Also set Apps name bcs it repeat multiple times in the file : `$APP_NAME` .
+- I use the command line tools call Environment Subtitute : `envsubst`. This command is actually used to subtitute any variables defined inside a file (this case Yaml file). And the syntax this command expect is `$IMAGE_NAME`
 
-  - In Jenkinsfile . I set `$IMAGE_NAME` as a ENV in the Version Incrementation Stage . Now I will also set `$APP_NAME` as a ENV in the Deploy Stage (can be in Global) .
+- This tool I need to install inside Jenkins Container
+
+- What it does in the background ?
+
+ - I pass a file to envsubst command `envsibst < config.yaml`, It will take that file and it will look for syntax of Dollar Sign and name of Variable and it will try to match that name of the Variable to any ENV defined in that context . Then It will create temporary file with the values set and I will pipe that temporary file and pass it as a parameter like this : `envsibst < config.yaml | kubectl apply -f`
+
+**Install gettext-base tool on Jenkins**
+
+- SSH to Jenkins server : `ssh root@`
+
+- Get into Jenkins container : `docker exec -it -u 0 <container-id> bash`
+
+- Install gettext-base : `apt-get install gettext-base`
+
+**Create Secret for DockerHub Credentials**
+
+- The way it will work is we are creating new Image and pushing it to Dockerhub repository . When I execute `kubectl apply -f config.yaml` and I have set `<docker-hub-repo>:IMAGE_NAME` in that yaml file K8 must be allowed to fetch that new Image from the private Repo bcs Dockerhub is secured . Basically the Docker Hub credentials I use in Jenkinsfile must be available inside the K8 Cluster .
+
+- The way to do that is create Secret with Docker Special type with Username and Password . Bcs it is a 1 time event I don't need to put in the pipeline bcs it will execute everytime .
+
+- I will create it once in K8 Cluster in local . Bcs usually if I have multiple projects in a team, maybe microservice application, they will all be hosted on the same Repository . So that should created once per Namespace . If I have multiple Namespace I have to create a Secret in each of those Namespace bcs I can not use Secret from another Namespace
+
+- Command for that : `kubectl create secret docker-registry <secret-name> --docker-server=docker.io --docker-username=<user-name> --docker-password=<password>`
+
+- Now I have Secret I need to make use of it in Yaml file :
+
+  ```
+  imagePullSecrets :
+   - name: <secret-name>
+  ``` 
 
 
 
