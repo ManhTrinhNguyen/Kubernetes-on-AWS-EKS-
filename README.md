@@ -1296,7 +1296,7 @@ users:
 
 - What it does in the background ?
 
- - I pass a file to envsubst command `envsibst < config.yaml`, It will take that file and it will look for syntax of Dollar Sign and name of Variable and it will try to match that name of the Variable to any ENV defined in that context . Then It will create temporary file with the values set and I will pipe that temporary file and pass it as a parameter like this : `envsibst < config.yaml | kubectl apply -f`
+ - I pass a file to envsubst command `envsubst < config.yaml`, It will take that file and it will look for syntax of Dollar Sign and name of Variable and it will try to match that name of the Variable to any ENV defined in that context . Then It will create temporary file with the values set and I will pipe that temporary file and pass it as a parameter like this : `envsubst < config.yaml | kubectl apply -f`
 
 **Install gettext-base tool on Jenkins**
 
