@@ -1199,7 +1199,9 @@ Instances that is Worker Nodes behinds this load balancer
     - Kubectl get executed which will use kubeconfig files created in .kube/config and inside that config file it is configure that aws-IAM-authenticator need to be use in order to authenticate with AWS account . And when aws-iam-authenticator command get trigger in the background, it need AWS_ACCESS_KEY and AWS_SECRET_ACCESS_KEY (AWS Credentials)
     ```
 
-    - !!! NOTE : This part of authentication where I need the aws-iam-authenticator and setting AWS-crenditals in addition to Kubernetes Authentication it acctually specific to AWS . Other platform will have different way to authenticate 
+    - !!! NOTE : This part of authentication where I need the aws-iam-authenticator and setting AWS-crenditals in addition to Kubernetes Authentication it acctually specific to AWS . Other platform will have different way to authenticate
+
+  This is a Project I did (https://github.com/ManhTrinhNguyen/java-maven-Deploy-to-K8-from-Jenkin)
 
 ## Deploy to LKE Cluster from Jenkins Pipelines
 
