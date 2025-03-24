@@ -1133,29 +1133,27 @@ Instances that is Worker Nodes behinds this load balancer
  - Basic config file contents
 
  ```
- apiVersion: v1
- kind: Config
- clusters:
-   - name: aws
-     cluster:
-       server: <Server API-Endpoint>
-       certificate-authority-data: <base64-encoded-ca-cert>
- users:
-   - name: arn:aws:eks:us-west-2:123456789012:cluster/my-cluster
-     user:
-       exec:
-         apiVersion: client.authentication.k8s.io/v1beta1
-         command: /usr/bin/aws-iam-authenticator
-         args:
-           - "eks"
-           - "get-token"
-           - "--cluster-name"
-           - "my-cluster" 
- contexts:
-   - name: aws
-     context:
-       cluster: kubernetes
-       user: aws
+apiVersion: v1
+kind: Config
+clusters:
+- cluster:
+    server: https://8E2A6732D5E7159E48B662E8B6C2F32A.yl4.us-west-1.eks.amazonaws.com
+    certificate-authority-data: LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSURCVENDQWUyZ0F3SUJBZ0lJU2FmRU1hSWpjaTB3RFFZSktvWklodmNOQVFFTEJRQXdGVEVUTUJFR0ExVUUKQXhNS2EzVmlaWEp1WlhSbGN6QWVGdzB5TlRBek1qSXhPREUwTXpGYUZ3MHpOVEF6TWpBeE9ERTVNekZhTUJVeApFekFSQmdOVkJBTVRDbXQxWW1WeWJtVjBaWE13Z2dFaU1BMEdDU3FHU0liM0RRRUJBUVVBQTRJQkR3QXdnZ0VLCkFvSUJBUURKL1czRlkwcGxQUGw0TjZvY1JDcnVaVUpGcENibUo1ZFJnSE9VN2JSaE44dDE3UDZEQUlNKzdqMUQKSGlMRW5Jdk4relN0eGk3ZzZzcEJLQ2dGNHRSMnNENDBzNFV2U3VMQS9UdE5oQ09LQVZjbDB2SmJQMCtDNlVHTwozWGowWHBNNVpRaG9abVZldVBCMnpDYkFmMHZJRld5K2c1YnlzOWlIalhHVkc5RnYwQkd0UVZmSlVoV09WSm9oCk1XckloYmtXSFJpVjM2TTRCenZ1bGN4TmNEeUhJd0tWWmxzT2wrTVd4SzhTUGR6ZG93VWRHOE96QTVrRHRSNlgKVE5JRTIydUNCYmUvWXN1aU1hNENvTU5xWWxSdUZuMTZacW5IZm80S0JObWVmMk9XVWJsUVYyWWlSVitSeml0VgpjK0IzM0VwTGRHWTlvaUJYS3RVWjdPS0Z5ZVNSQWdNQkFBR2pXVEJYTUE0R0ExVWREd0VCL3dRRUF3SUNwREFQCkJnTlZIUk1CQWY4RUJUQURBUUgvTUIwR0ExVWREZ1FXQkJUSFVtVDZlU1dJL0E4VFowQXJpcnhJVGpkZkp6QVYKQmdOVkhSRUVEakFNZ2dwcmRXSmxjbTVsZEdWek1BMEdDU3FHU0liM0RRRUJDd1VBQTRJQkFRQ2ZuYU4xSm9GOApWdVR1a00rS1dQTUl6MFJxbTdsSUV6VzdGTVUyRlR0bHg0OW1HZW5CNVFqWjEweEhmd2hjaW5WdXR3RHVwa3JnCklCVVZYaXRDMlpFTld5NTJsYmNSMkVoQk56UVdNeTBpSnRsT0d0bHZBcWlqTlB2bTM2SDg5VHhGQUpCbEVsbHIKLzRiRXlXR0puTWRpZmd4SHlQczRDWmovVE1jQWpsUHo1elg3RHk5bjM1a2Q3Z3NHcFNZOGkwTHBDdXFxOElGMwp6RGZjUG9NM0dzWEEwZzNlZ2hmTmtoVkhXOXE0bTU4YjlMKzkrKzFwU1o4WUVNUlVJMHJhWTY2ZisrRE9Scmt4Ci9zZTFvWThWMG4zaytNeFoxR0RuYUZFYmxTNHp4OTFkb1VCaW5zakdIVzhVekF5ZzVNYjY0Sm1QaHNhTUplN3UKWGZtSk9rRW9iNys0Ci0tLS0tRU5EIENFUlRJRklDQVRFLS0tLS0K
+users:
+- name: aws
+  user:
+    exec:
+      apiVersion: client.authentication.k8s.io/v1beta1
+      command: /usr/bin/aws-iam-authenticator
+      args:
+        - "token"
+        - "-i"
+        - "eks-cluster-cli"
+contexts:
+- name: aws
+  context:
+    cluster: kubernetes
+    user: aws
  ```
 
  - I need to put in Cluster name
@@ -1164,7 +1162,7 @@ Instances that is Worker Nodes behinds this load balancer
 
  - The other thing I need to chagne is certificate-authority-data : This is something that get generated in EKS Cluster when its gets created and I have that file available on local in `kube/config`
 
- - When I have the file ready I go inside Jenkins and create kube folder : `docker exec -it <container-id> bash` then `mkdir kube`
+ - When I have the file ready I go inside Jenkins and create kube folder : `docker exec -it <container-id> bash` then I will go back to Jenkins home `cd ~`, to see the path use `pwd` I should see `/var/jenkins_home` then I create .kube folder `mkdir .kube` to store kubeconfig file
 
  - Then copy config file from host to Jenkins : `docker cp config container-id:/var/jenkins_home/.kube/`
 
