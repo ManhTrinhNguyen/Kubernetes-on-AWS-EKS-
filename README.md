@@ -1325,6 +1325,49 @@ users:
 
  - Project I did here : (https://github.com/ManhTrinhNguyen/java-maven-Deploy-to-K8-from-Jenkin#) 
 
+### Complete CI/CD Pipeline with EKS And ECR
+
+**Steps we need to do**
+
+ - Step 1: Create ECR Repository : In ECR I have unlimited number of Repository
+
+   - In AWS UI -> Go to ECR -> Create Repository -> Repository name will give me a URL tag for the repo name and I can put a name after it
+  
+   - Basically the way it work is, for example I have Microservices Appliscations, each Micros has it own Repository and each Micros should have multiple version tag to it 
+
+ - Step 2: Create Credentials in Jenkins
+
+   - The way to get ECR Credentials is I can see it on the View Push Command that AWS provided : Password -> `aws ecr get-login-password --region us-west-1` , Username -> `AWS`
+  
+   - Also the Third Parameter is the Docker Registry URL (ECR Registry URL) . DockerHub is default `docker.io` so I don't need to provide . But other services I do need to provide URL
+  
+   - Go to -> Jenkins UI -> Manage Jenkins -> Credentials -> Choose Username and Password 
+
+ - Step 3: Addjust building and tagging
+
+ - Step 4: Do `docker login` to login into AWS and then `docker push` to that Registry
+
+ - Step 5: Once I have an Image in ECR, I need to fetch it to EKS Cluster . So I need to create Secret for ECR so the Kubernetes can fetch Image from ECR
+
+   - To create AWS Secret `kubectl create secret docker-registry <secret-name> --docker-server=<ECR URL> --docker-username=AWS --docker-passowrd=<ECR password>`
+
+ - Step 6 : Update Jenkinfile
+
+   - I need to change Credentials ID to build and push image
+  
+   - Change Docker build URL : `docker build -t <ecr-url>:${IMAGE_NAME} .`
+
+   - I need <ecr-url> in multiple places : docker build , docker push, deployment.yaml . So I will extract it whole string into a variable `environment{ DOCKER_REPO_SERVER = <ecr-url>, DOCKER_REPO = "${DOCKER_REPO_SERVER}/java-maven-app"}`. This way if I need to change it later I only need to change it in 1 place . Also I will put DOCKER_REPO_SERVER in a `docker login`  
+
+
+<img width="898" alt="Screenshot 2025-03-26 at 10 41 23" src="https://github.com/user-attachments/assets/7652cf91-327b-4e76-8564-3d4224eebc0f" />
+
+
+
+
+
+
+
 
 
 
