@@ -702,23 +702,110 @@ Step 8 : Deploy my App on Cluster
 
 **Things need to do in order to configure Autoscaler**
 
-```
- - First: Autoscaling Group (Can change Min and Max anytime)
+- First: Autoscaling Group (Can change Min and Max anytime)
 
- - Second : Create a Role for my NodeGroup . For the autoscaling to work, I need to give the EC2 Instances inside the Worker Node certain permission to make AWS API calls
+- Second : Create Auto Scaler Policy . Then attach it to Service Account 
 
- - Third : Deploy Cluster AutoScaler 
-```
+- Third : Deploy Cluster AutoScaler 
 
-**Create custom Policy for my NodeGroup**
+**Create custom Autoscaler Policy for my NodeGroup**
 
-```
- - IAM -> go to Policy -> go to Create Policy -> Choose JSON then paste the custom list of Policy in there -> Then give it a name and create it
+- IAM -> go to Policy -> go to Create Policy -> Choose JSON then paste the custom list of Policy in there -> Then give it a name and create it
 
- - Custome list is the one that has a list of all the Permissions that we need to give NodeGroup IAM role for the autoscaling to work
+ ```
+     {
+      "Version": "2012-10-17",
+      "Statement": [
+          {
+              "Effect": "Allow",
+              "Action": [
+                  "autoscaling:DescribeAutoScalingGroups",
+                  "autoscaling:DescribeAutoScalingInstances",
+                  "autoscaling:DescribeLaunchConfigurations",
+                  "autoscaling:DescribeScalingActivities",
+                  "ec2:DescribeImages",
+                  "ec2:DescribeInstanceTypes",
+                  "ec2:DescribeLaunchTemplateVersions",
+                  "ec2:GetInstanceTypesFromInstanceRequirements",
+                  "eks:DescribeNodegroup"
+              ],
+              "Resource": [
+                  "*"
+              ]
+          },
+          {
+              "Effect": "Allow",
+              "Action": [
+                  "autoscaling:SetDesiredCapacity",
+                  "autoscaling:TerminateInstanceInAutoScalingGroup"
+              ],
+              "Resource": [
+                  "*"
+              ]
+          }
+      ]
+  }
+  ```
 
- - After Policy created . Attach it to a WorkerNode IAM Role 
-```
+- Custome list is the one that has a list of all the Permissions that we need to give NodeGroup IAM role for the autoscaling to work
+
+- After Policy created . Create OIDC for authentication
+
+**Create OIDC Provider**
+
+- OIDC federated authentication allows your service to assume an IAM role and interact with AWS services without having to store credentials as environment variables.
+
+- **Prerequisites**
+  
+  - An Active EKS cluster (1.14 preferred since it is the latest) against which the user is able to run kubectl commands.
+
+  - Cluster must consist of at least one worker node ASG.
+ 
+- **Create an IAM OIDC identity provider for your cluster with the AWS Management Console**
+
+  - Open the Amazon EKS console.
+  
+  - In the left pane, select Clusters, and then select the name of your cluster on the Clusters page.
+  
+  - In the Details section on the Overview tab, note the value of the OpenID Connect provider URL.
+  
+  - Open the IAM console at https://console.aws.amazon.com/iam/.
+  
+  - In the left navigation pane, choose Identity Providers under Access management. If a Provider is listed that matches the URL for your cluster, then you already have a provider for your cluster. If a provider isn’t listed that matches the URL for your cluster, then you must create one.
+  
+  - To create a provider, choose Add provider.
+  
+  - For Provider type, select OpenID Connect.
+  
+  - For Provider URL, enter the OIDC provider URL for your cluster.
+  
+  - For Audience, enter sts.amazonaws.com.
+  
+  - (Optional) Add any tags, for example a tag to identify which cluster is for this provider.
+  
+  - Choose Add provider.
+ 
+- **Create a test IAM policy for your service accounts.**
+
+   - I Already created in **Create custom Autoscaler Policy for my NodeGroup**
+  
+- **Create an IAM role for your service accounts in the console.**
+
+   - Retrieve the OIDC issuer URL from the Amazon EKS console description of your cluster . It will look something identical to: 'https://oidc.eks.us-east-1.amazonaws.com/id/xxxxxxxxxx'
+   
+   - While creating a new IAM role, In the "Select type of trusted entity" section, choose "Web identity".
+   
+   - In the "Choose a web identity provider" section: For Identity provider, choose the URL for your cluster. For Audience, type sts.amazonaws.com.
+   
+   - In the "Attach Policy" section, select the policy to use for your service account, that you created in Section B above.
+   
+   - After the role is created, choose the role in the console to open it for editing.
+   
+   - Choose the "Trust relationships" tab, and then choose "Edit trust relationship". Edit the OIDC provider suffix and change it from :aud to :sub. Replace sts.amazonaws.com to your service account ID.
+ 
+     - Service Account ID is : `system:serviceaccount:<namespace>:<service-account-name>`.  
+   
+   - Update trust policy to finish. 
 
 **Configure Tags on Autoscaling Group . Automate created by AWS**
 
@@ -728,50 +815,64 @@ Step 8 : Deploy my App on Cluster
 
 **Deploy Cluster Autoscaler**
 
-```
- - Using : kubectl apply -f <Autoscaler-Deployment-file> : ( https://raw.githubusercontent.com/kubernetes/autoscaler/master/cluster-autoscaler/cloudprovider/aws/examples/cluster-autoscaler-autodiscover.yaml )
 
- - In that Yamlfile :
+- Using : kubectl apply -f <Autoscaler-Deployment-file> : ( https://raw.githubusercontent.com/kubernetes/autoscaler/master/cluster-autoscaler/cloudprovider/aws/examples/cluster-autoscaler-autodiscover.yaml )
 
-  -- In the command part I have the Configuration where NodeGroup auto discover is configured using these tags : --node-group-auto-discovery=asg:tag=k8s.io/cluster-autoscaler/enabled,k8s.io/cluster-autoscaler/<YOUR CLUSTER NAME>
+- In that Yamlfile :
 
- - To check my Deployment : kubectl get deployment -n kube-system cluster-autoscaler
+  - In the command part I have the Configuration where NodeGroup auto discover is configured using these tags : --node-group-auto-discovery=asg:tag=k8s.io/cluster-autoscaler/enabled,k8s.io/cluster-autoscaler/<YOUR CLUSTER NAME>
 
- - I want to change something in the Deployment file I can use :  kubectl edit deployment -n kube-system cluster-autoscaler
+  - In the Service Account section add the code below . This is how I attach Auto-scaler-role to Service Account . 
 
-   - Edit annotation : cluster-autoscaler.kubernetes.io/safe-to-evict: "false"
+    ```
+    annotations:
+      eks.amazonaws.com/role-arn: arn:aws:iam::565393037799:role/Auto-Scaler-Role
+    ```
+  - In the Deployment section add Region ENV :
+ 
+    ```
+    env:
+      - name : AWS_REGION
+        value : us-west-1
+    ``` 
 
-   - In the command part change <Your Cluster Name> to actual cluster name
+- To check my Deployment : kubectl get deployment -n kube-system cluster-autoscaler
 
-   - Change Image version : Image version have to match with EKS Cluster Version
+- I want to change something in the Deployment file I can use :  kubectl edit deployment -n kube-system cluster-autoscaler
 
-   - In the Command level add : --balance-similar-node-groups and --skip-nodes-with-system-pods=false
+  - Edit annotation : cluster-autoscaler.kubernetes.io/safe-to-evict: "false"
 
- - To check pods in kube-system namespace : kubectl get pod -n kube-system
+  - In the command part change <Your Cluster Name> to actual cluster name
 
-  - In Kube-system For each Node I have these processes : KubeProxy (One of Worker Proccess) and awsNodes proccesses run on each Nodes, , DNScore no need to sit on every Nodes . Also I can see autoScaler pod run in one of Intances as well
+  - Change Image version : Image version have to match with EKS Cluster Version
 
-  - If I add another Node these awsNoes and KubeProxy Pods will get scheduled on the new Node as well
+  - In the Command level add : --balance-similar-node-groups and --skip-nodes-with-system-pods=false
 
- - To see Which Instances run the Autoscaler : `kubectl get pods -n kube-system <autoscaler-pod-name> -o wide`, then I get the Node name so I can see its logs : `kubectl logs <Node-name>` .
- - To make a logs easier to read : `kubectl logs <Node-name> > as-logs.txt`
+- To check pods in kube-system namespace : kubectl get pod -n kube-system
 
-  - In the Logs I can see couple of time of Caculating no need Node, Scale down started , No candidate for Scale Down
+ - In Kube-system For each Node I have these processes : KubeProxy (One of Worker Proccess) and awsNodes proccesses run on each Nodes, , DNScore no need to sit on every Nodes . Also I can see autoScaler pod run in one of Intances as well
 
-  - To test it I change the Autoscaling Group min to 1 . Once the NodeGroup Configuration get Updated and the Autoscaler run again to reevalute the status . I can see that NodeGroup will scale to down to just 1 Instances . Now that Autoscaler has run again with a new configuration .
+ - If I add another Node these awsNoes and KubeProxy Pods will get scheduled on the new Node as well
 
-   - After the Configuration changed to Autoscaler started scale down processes . Here I see autoscaler will check out the Nodes in the AutoScaling Group and as part of the Scale down processes, it will actually analyze when the Instaces were last used . After this evaluation, the Preparing for removing this Nodes will actually get started . And I can see a Auto Scaling Pod from my Cluster is being moved to another Node. So Autoscaler decided lets move the Node right here, which happen to be the First one of the two and the AutoScaler itself was scheudeded in that Node so it need to move that Pod to another Node
+- To see Which Instances run the Autoscaler : `kubectl get pods -n kube-system <autoscaler-pod-name> -o wide`, then I get the Node name so I can see its logs : `kubectl logs <Node-name>` .
+- To make a logs easier to read : `kubectl logs <Node-name> > as-logs.txt`
 
-   - Also at the begining each EC2 Instances or Worker Node has its own default process running there . These processes are there when EC2 initilized and these are Kubernetess Processes
+ - In the Logs I can see couple of time of Caculating no need Node, Scale down started , No candidate for Scale Down
 
-   - Toward down the part of Logs . The pod are actually get deleted as part of the process so I can see this Clean up message
+ - To test it I change the Autoscaling Group min to 1 . Once the NodeGroup Configuration get Updated and the Autoscaler run again to reevalute the status . I can see that NodeGroup will scale to down to just 1 Instances . Now that Autoscaler has run again with a new configuration .
 
- ----Advantage----
+  - After the Configuration changed to Autoscaler started scale down processes . Here I see autoscaler will check out the Nodes in the AutoScaling Group and as part of the Scale down processes, it will actually analyze when the Instaces were last used . After this evaluation, the Preparing for removing this Nodes will actually get started . And I can see a Auto Scaling Pod from my Cluster is being moved to another Node. So Autoscaler decided lets move the Node right here, which happen to be the First one of the two and the AutoScaler itself was scheudeded in that Node so it need to move that Pod to another Node
 
- - Save cost when I am not using using the capacity of EC2 Insanctes it will get removed
+  - Also at the begining each EC2 Instances or Worker Node has its own default process running there . These processes are there when EC2 initilized and these are Kubernetess Processes
 
- - However the trade-of of that whenever I need a new EC2 instances It will take time to shedule new Pod
-```
+  - Toward down the part of Logs . The pod are actually get deleted as part of the process so I can see this Clean up message
+
+----Advantage----
+
+- Save cost when I am not using using the capacity of EC2 Insanctes it will get removed
+
+- However the trade-of of that whenever I need a new EC2 instances It will take time to shedule new Pod
+
 
 **Deploy Nginx Application**
 
