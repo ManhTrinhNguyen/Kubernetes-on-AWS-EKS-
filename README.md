@@ -427,6 +427,24 @@ Step 8 : Deploy my App on Cluster
 
  - Kube-Proxy : Manage Networking tasks like routing in my Cluster . Kube-proxy will run on all of My Nodes and forward all the traffics between Services and Pods using these Routing Rules and make sure all the part of the CLuster can Communicate
 
+ ```
+  [Client inside cluster or NodePort user]
+               |
+               v
+          +-----------+
+          |  Service  |  ← ClusterIP / NodePort / LoadBalancer
+          +-----------+
+               |
+       kube-proxy decides where to send traffic
+               |
+      -------------------------
+      |          |           |
+      v          v           v
+  [Pod A]     [Pod B]     [Pod C]
+  (10.0.0.1)  (10.0.0.2)  (10.0.0.3)
+
+ ```
+
  - Amazon VPC CNI(Container Network Interface ) :
 
   -- Enable easier communication my My Cluster . It will create Network Layers within the Cluster, so that all the Pods running on all these different Nodes will communicate with each other as if they were running on the same Server (The same local network) .
