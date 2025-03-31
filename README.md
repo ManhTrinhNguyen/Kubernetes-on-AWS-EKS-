@@ -532,60 +532,60 @@ Step 8 : Deploy my App on Cluster
 
 **Create EC2 Role for Node Group**
 
-```
- - Worker Nodes run Workers processes . Kublet is one of the Processes
+- Worker Nodes run Workers processes . Kublet is one of the Processes
 
- - Kubelet is the main Processes that responsible for scheduling Pods , getting all Resources from Servers like RAM, CPU ... assigning to the Pod . But also communicate with other Services in AWS and K8's Control Plane .
+- Kubelet is the main Processes that responsible for scheduling Pods , getting all Resources from Servers like RAM, CPU ... assigning to the Pod . But also communicate with other Services in AWS and K8's Control Plane .
 
- - Basically Kubelet make various API calls, including to AWS services on my behalf .
+- Basically Kubelet make various API calls, including to AWS services on my behalf .
 
- - So I need to give Kubelet permissions to execute all of those Tasks . (Give Kubelet a IAM Roles)
+- So I need to give Kubelet permissions to execute all of those Tasks . (Give Kubelet a IAM Roles)
 
-  - Step 1 : I need to create a Role for NodeGroup that allow Worker Processes to perform certain Action 
+ - Step 1 : I need to create a Role for NodeGroup that allow Worker Processes to perform certain Action 
 
-   -- Go to IAM Roles -> Create Role for EC2 -> so Processes on EC2 will then able to do stuff or interact with other AWS Services -> Then Choose AmazonEKSWorkerNodePolicy, ContainerRegistryPolicyReadOnly, Amazon EKS_CNI Policy
+  - Go to IAM Roles -> Create Role for EC2 -> so Processes on EC2 will then able to do stuff or interact with other AWS Services -> Then Choose AmazonEKSWorkerNodePolicy, ContainerRegistryPolicyReadOnly, Amazon EKS_CNI Policy
 
-   -- AmazonEKSWorkerNodePolicy : Include access to EC2 and EKS
+   - AmazonEKSWorkerNodePolicy : Include access to EC2 and EKS
 
-   -- ContainerRegistryPolicyReadOnly : Include Permission for ECR (Elastic Container Registry) . This will be important relevant when we connect our Worker Nodes with the Container registry , so they can pull the Container Registry so they can pull Images from there with new Versions .
+   - ContainerRegistryPolicyReadOnly : Include Permission for ECR (Elastic Container Registry) . This will be important relevant when we connect our Worker Nodes with the Container registry , so they can pull the Container Registry so they can pull Images from there with new Versions .
 
-    !!! Note : AWS services intergrate well together . As long as we give them permission to interact with each other we can Configure communication between them .
+   !!! Note : AWS services intergrate well together . As long as we give them permission to interact with each other we can Configure communication between them .
 
-   -- Amazon_eks_CNI policy : This has access to EC2 services . All Actions can perform on that Services . Baciscally CNI is a Container Network Interface. CNI is internal network in Kubernetes . So that Pod in different Servers can communicate with each other . No matter they are on Worker Nodes or Control Plane Nodes or which of those Node they are located . I am giving that role access to the CNI policy so that it can interact with other Worker Nodes 
+   - Amazon_eks_CNI policy :
 
-```
+     - This Policy allows the Amazon VPC CNI plugin in EKS to do its job — mainly, to manage networking for your Pods.
+     
+     - This has access to EC2 services . All Actions can perform on that Services . Baciscally CNI is a Container Network Interface. CNI is internal network in Kubernetes . So that Pod in different Servers can communicate with each other . No matter they are on Worker Nodes or Control Plane Nodes or which of those Node they are located . I am giving that role access to the CNI policy so that it can interact with other Worker Nodes 
+
 
 ### Step 6 : Add NodeGroup to EKS Cluster 
 
-```
- - Step 1: Goto EKS Compute -> Add Node Group -> Select the Role that will give Node Group and EC2 Instaces in that Node Group Permission for interacting with other AWS Services
+- Step 1: Goto EKS Compute -> Add Node Group -> Select the Role that will give Node Group and EC2 Instaces in that Node Group Permission for interacting with other AWS Services
 
- - Step 2 : Set compute and scaling configuration
+- Step 2 : Set compute and scaling configuration
 
-   -- AMI Type
+  -- AMI Type
 
-   -- Capacity Type : On demand (You pay for what you use) .
+  -- Capacity Type : On demand (You pay for what you use) .
 
-   -- Instance Type : t3.small . The Type have CPU, Memory ...
+  -- Instance Type : t3.small . The Type have CPU, Memory ...
 
-   -- Disk size : The Storage
+  -- Disk size : The Storage
 
-   -- NodeGroup Scaling Infomation configuration : Desired size , Minimum Size, Maximum Size .
-     -- For example : If my Desired size : 3, Minium Size : 2 , Desire Size : 4 . So It will launch with 3 Intances and it will scale up or down base on the Work Load it will run on the Cluster
+  -- NodeGroup Scaling Infomation configuration : Desired size , Minimum Size, Maximum Size .
+    -- For example : If my Desired size : 3, Minium Size : 2 , Desire Size : 4 . So It will launch with 3 Intances and it will scale up or down base on the Work Load it will run on the Cluster
 
-   -- NodeGroup Update configuration : NodeGroup will update by AWS  to a latest Version when they are released . I can define how many Node it should taken offline during this update process
+  -- NodeGroup Update configuration : NodeGroup will update by AWS  to a latest Version when they are released . I can define how many Node it should taken offline during this update process
 
- - Step 3 : Specify Network Configuration
+- Step 3 : Specify Network Configuration
 
-  -- Our Worker Node need to run in VPC that I have created with these specific configuration . So that Control Plan which is running on another VPC on another AWS Account can connect to that VPC and can Managed the Worker Node  running in the different Subnet within that VPC.
+ -- Our Worker Node need to run in VPC that I have created with these specific configuration . So that Control Plan which is running on another VPC on another AWS Account can connect to that VPC and can Managed the Worker Node  running in the different Subnet within that VPC.
 
-  -- So I am configuring which VPC and Subnet our NodeGroups is going to launch
+ -- So I am configuring which VPC and Subnet our NodeGroups is going to launch
 
-  -- I have specified 2 EC2 instances for this NodeGroup right now . And I have 4 Subner . Which mean NodeGroup can launch EC2 instances in different Subnet . Eventhough right now I have just 2 if I add additional EC2 instances later If I scale it up to 10 EC2 Instances then it will be distributed among different Subnet 
+ -- I have specified 2 EC2 instances for this NodeGroup right now . And I have 4 Subner . Which mean NodeGroup can launch EC2 instances in different Subnet . Eventhough right now I have just 2 if I add additional EC2 instances later If I scale it up to 10 EC2 Instances then it will be distributed among different Subnet 
 
-  -- Enable SSH that allowing access to Worker Node
+ -- Enable SSH that allowing access to Worker Node
 
-```
 
 **Wrap up**
 
