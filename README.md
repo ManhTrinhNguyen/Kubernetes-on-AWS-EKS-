@@ -266,7 +266,7 @@ Step 8 : Deploy my App on Cluster
 
  - EKS Cluster need specific networking Configuration for it to work without problems
 
- - EKS based on Kunbernetes . Kubernetes has it own networking rules and AWS on top of that has it owns Networking Rules and those 2 have to work together and for that it need to configure correctly
+ - EKS based on Kunbernetes . Kubernetes has it own networking rules and AWS on top of that has it owns Networking Rules and those 2 have to work together and for that it need to configure correctly . The Default VPC is not optimized for EKS Cluster
 
  - When I create VPC in order to create the EKS Cluster this VPC is a network that is going to run my Worker Nodes . So It is not a VPC that I am creating for EKS or the master Nodes, but rather for Worker Nodes
 
