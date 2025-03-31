@@ -243,152 +243,137 @@ Step 8 : Deploy my App on Cluster
 
 ### Step 1 : Create EKS IAM role
 
-```
-  - I will create a Role in my AWS account that will have permissions attached to it and I will give that Role to AWS services outside my own Account, This will be services EKS that managed by AWS to Manage, Create components on my AWS account on my behalf
+ - I will create a Role in my AWS account that will have permissions attached to it and I will give that Role to AWS services outside my own Account, This will be services EKS that managed by AWS to Manage, Create components on my AWS account on my behalf
 
-  - Concept in AWS : I can give Role from my Account to another Account . So that Service on another account can manage components and Services on my Account
+ - Concept in AWS : I can give Role from my Account to another Account . So that Service on another account can manage components and Services on my Account
 
-  - In AWS Console go to IAM -> Choose Role -> Choose AWS service (Allow AWS services like EC2, Lamdba, or other perform action on AWS account) -> Choose EKS-Cluster (will automatically selected Policy for me) . This is done for Step 1 and 2
+ - In AWS Console go to IAM -> Choose Role -> Choose AWS service (Allow AWS services like EC2, Lamdba, or other perform action on AWS account) -> Choose EKS-Cluster (will automatically selected Policy for me) . This is done for Step 1 and 2
 
-  - In Step 3 : Give it a name and there is 2 piceces Information
-   -- First one : Which Service is allow to use That Role (Selected Trust entities) . In this case is EKS 
-   -- Second one :  What EKS allow to do in that Role (Policy) .
+ - In Step 3 : Give it a name and there is 2 piceces Information
+  -- First one : Which Service is allow to use That Role (Selected Trust entities) . In this case is EKS 
+  -- Second one :  What EKS allow to do in that Role (Policy) .
 
-  !!! Note : IAM service is not defined per Region but It is global for my Whole Account 
-```
+ !!! Note : IAM service is not defined per Region but It is global for my Whole Account 
+
 
 ### Step 2 : Create VPC for Worker Nodes
 
-```
-  - In AWS I have default VPC that AWS created for me in every Region
+ - In AWS I have default VPC that AWS created for me in every Region
 
-  - And I also have subnet in VPC and Route Table
+ - And I also have subnet in VPC and Route Table
 
-  ----Why do I need another VPC for EKS cluster when I already have existing VPC with all Components?----
+ ----Why do I need another VPC for EKS cluster when I already have existing VPC with all Components?----
 
-  - EKS Cluster need specific networking Configuration for it to work without problems
+ - EKS Cluster need specific networking Configuration for it to work without problems
 
-  - EKS based on Kunbernetes . Kubernetes has it own networking rules and AWS on top of that has it owns Networking Rules and those 2 have to work together and for that it need to configure correctly
+ - EKS based on Kunbernetes . Kubernetes has it own networking rules and AWS on top of that has it owns Networking Rules and those 2 have to work together and for that it need to configure correctly
 
-  - When I create VPC in order to create the EKS Cluster this VPC is a network that is going to run my Worker Nodes . So It is not a VPC that I am creating for EKS or the master Nodes, but rather for Worker Nodes
+ - When I create VPC in order to create the EKS Cluster this VPC is a network that is going to run my Worker Nodes . So It is not a VPC that I am creating for EKS or the master Nodes, but rather for Worker Nodes
 
-  - For example : Some specific Configuration that Kubernetes or EKS cluster needs are Firewall Rule . Each VPC has Subnets, and Subnets has their own Firewall rules Which are configured by Network ACLs (Access Control List) . Inside Subnet I have EC2 and each EC2 instances can have their own Firewall rules Which is defined by Security Group
+ - For example : Some specific Configuration that Kubernetes or EKS cluster needs are Firewall Rule . Each VPC has Subnets, and Subnets has their own Firewall rules Which are configured by Network ACLs (Access Control List) . Inside Subnet I have EC2 and each EC2 instances can have their own Firewall rules Which is defined by Security Group
 
-  - Bascically, My Worker Nodes which are going to run in my VPC in different Subnets, need to have set of Firewall rules that is nessesary for Control Plane nodes to connect to my Worker Node and also to manage them .
+ - Bascically, My Worker Nodes which are going to run in my VPC in different Subnets, need to have set of Firewall rules that is nessesary for Control Plane nodes to connect to my Worker Node and also to manage them .
 
-  !!! !!! EKS running on different VPC which is managed by AWS outside of my AWS account . And Worker Node running on VPC that managed by my AWS account . So the communication need to work between Control Plane and Worker Node accross those different VPC
+ !!! !!! EKS running on different VPC which is managed by AWS outside of my AWS account . And Worker Node running on VPC that managed by my AWS account . So the communication need to work between Control Plane and Worker Node accross those different VPC
 
-  - And for that communication all the nessesary Port need to configured correctly
+ - And for that communication all the nessesary Port need to configured correctly
 
-  - Another Important Example Specific to EKS is best practice for Creating and Configuring Subnets in my Worker Nodes VPC . That is having Public Subnet and Private Subnet . That mean when I create a Service which is Loadbalancer Type Service, Service get created also automatically a cloud native LoadBalancer get Created . What happen is when I configure Subnet into Private and Public K8 will know to create that external Loadbalancer in Public Subnet bcs I want that Load balancer to be accessible externally . So I want to create it in Public Subnet that allow external connection
+ - Another Important Example Specific to EKS is best practice for Creating and Configuring Subnets in my Worker Nodes VPC . That is having Public Subnet and Private Subnet . That mean when I create a Service which is Loadbalancer Type Service, Service get created also automatically a cloud native LoadBalancer get Created . What happen is when I configure Subnet into Private and Public K8 will know to create that external Loadbalancer in Public Subnet bcs I want that Load balancer to be accessible externally . So I want to create it in Public Subnet that allow external connection
 
- - In Addition to that to giving this infomation to Kubernetes or Control Plane on EKS to my Worker Nodes VPC , I also give Kubernetes permission to change things in my VPC . It happen through a Role and that Permission to open PORT on my behalf in my VPC . For example If I create NodePort Service, that mean my Worker Node need to open a PORT so that directly accessible on that NODE PORT . So Control Plane will do it automatically in my behalf
+- In Addition to that to giving this infomation to Kubernetes or Control Plane on EKS to my Worker Nodes VPC , I also give Kubernetes permission to change things in my VPC . It happen through a Role and that Permission to open PORT on my behalf in my VPC . For example If I create NodePort Service, that mean my Worker Node need to open a PORT so that directly accessible on that NODE PORT . So Control Plane will do it automatically in my behalf
 
-```
 
 **Why do I need another VPC for EKS cluster when I already have existing VPC with all Components? Part 2**
 
-```
  - Using a separate VPC for your Amazon EKS (Elastic Kubernetes Service) cluster instead of the default VPC is generally recommended for several reasons:
 
-  1. Security & Isolation
+ 1. Security & Isolation
 
-   - A dedicated VPC ensures that your Kubernetes workloads are isolated from other AWS resources that may exist in the default VPC.
-   - You can apply fine-grained network security policies (e.g., private subnets, security groups, and network ACLs) to control access.
+  - A dedicated VPC ensures that your Kubernetes workloads are isolated from other AWS resources that may exist in the default VPC.
+  - You can apply fine-grained network security policies (e.g., private subnets, security groups, and network ACLs) to control access.
 
-  2. Custom Networking Requirements
+ 2. Custom Networking Requirements
 
-   - EKS requires specific networking configurations, such as multiple subnets across Availability Zones (AZs) for high availability.
-   - You might want to configure private subnets for worker nodes to restrict public internet exposure.
+  - EKS requires specific networking configurations, such as multiple subnets across Availability Zones (AZs) for high availability.
+  - You might want to configure private subnets for worker nodes to restrict public internet exposure.
 
-  3. Avoiding Conflicts
+ 3. Avoiding Conflicts
 
-   - The default VPC might have overlapping CIDR ranges, which could cause IP address conflicts if you have multiple services running.
-   - Creating a separate VPC allows for better IP address planning, avoiding subnet exhaustion issues.
+  - The default VPC might have overlapping CIDR ranges, which could cause IP address conflicts if you have multiple services running.
+  - Creating a separate VPC allows for better IP address planning, avoiding subnet exhaustion issues.
 
-  4. Better Control over VPC Components
+ 4. Better Control over VPC Components
 
-   - With a custom VPC, you can configure custom NAT gateways, route tables, security groups, and other networking components tailored for Kubernetes.
-   - The default VPC might not have the necessary private/public subnet separation or the correct settings for Kubernetes networking.
+  - With a custom VPC, you can configure custom NAT gateways, route tables, security groups, and other networking components tailored for Kubernetes.
+  - The default VPC might not have the necessary private/public subnet separation or the correct settings for Kubernetes networking.
 
-  5. Compliance & Governance
+ 5. Compliance & Governance
 
-   - Some organizations have strict compliance policies requiring Kubernetes clusters to be deployed in dedicated, isolated environments.
-   - A separate VPC makes it easier to enforce security and compliance policies.
+  - Some organizations have strict compliance policies requiring Kubernetes clusters to be deployed in dedicated, isolated environments.
+  - A separate VPC makes it easier to enforce security and compliance policies.
 
-  6. Enhanced Scalability
+ 6. Enhanced Scalability
 
-   - If your EKS cluster scales significantly, it’s better to have a VPC designed to handle increased network traffic and resources.
-   - The default VPC may have limited resources that might not be sufficient for large-scale Kubernetes workloads.
+  - If your EKS cluster scales significantly, it’s better to have a VPC designed to handle increased network traffic and resources.
+  - The default VPC may have limited resources that might not be sufficient for large-scale Kubernetes workloads.
 
-  7. Multi-Environment Deployments
+ 7. Multi-Environment Deployments
 
-  - If you deploy multiple environments (e.g., Dev, Staging, and Production), using separate VPCs for each cluster helps maintain isolation and prevent interference.
-```
+ - If you deploy multiple environments (e.g., Dev, Staging, and Production), using separate VPCs for each cluster helps maintain isolation and prevent interference.
 
 **To Create VPC for EKS by using AWS template (CloudFormation)**
 
-```
- - Create a whole stack, the VPC and all Components, Security Group, Internet Gateway, Subnet ... in CloudForamtion
- 
- - In CloudFormation -> Choose Create Stack
- 
- - Generally I have defined or pre-defined files with all the configuration nessessary that basically need to describe what needs to create with which Configuration .
- 
- - Template also host in S3 buckets . Available on AWS S3 bucker URL
- 
- - There is a page in AWS EKS Docs where I can see all these URL  (https://docs.aws.amazon.com/eks/latest/userguide/creating-a-vpc.html)
-```
+- Create a whole stack, the VPC and all Components, Security Group, Internet Gateway, Subnet ... in CloudForamtion
+
+- In CloudFormation -> Choose Create Stack
+
+- Generally I have defined or pre-defined files with all the configuration nessessary that basically need to describe what needs to create with which Configuration .
+
+- Template also host in S3 buckets . Available on AWS S3 bucker URL
+
+- There is a page in AWS EKS Docs where I can see all these URL  (https://docs.aws.amazon.com/eks/latest/userguide/creating-a-vpc.html)
 
 **2 choices to create VPC**
 
-```
- 1. Create VPC with all private Subnets
+1. Create VPC with all private Subnets
 
- 2. Or Create VPC with all Public Subnets
+2. Or Create VPC with all Public Subnets
 
- 3. Or a mixture of those (Recommended by AWS)
-```
+3. Or a mixture of those (Recommended by AWS)
 
 **Create VPC with Private and Public Subnets**
 
-```
- - URL of Public and Private Network : https://s3.us-west-2.amazonaws.com/amazon-eks/cloudformation/2020-10-29/amazon-eks-vpc-private-subnets.yaml
+- URL of Public and Private Network : https://s3.us-west-2.amazonaws.com/amazon-eks/cloudformation/2020-10-29/amazon-eks-vpc-private-subnets.yaml
 
- - This is content of template using multiple components using one template file
+- This is content of template using multiple components using one template file
 
- - In the template : I have VPC itself with Cidr block - Subnet with Cidr block (is IP address range) - IP address range will be use to assign the IP address to Components in Kubernetes Cluster
+- In the template : I have VPC itself with Cidr block - Subnet with Cidr block (is IP address range) - IP address range will be use to assign the IP address to Components in Kubernetes Cluster
 
- - Put Template URL S3 URL
+- Put Template URL S3 URL
 
- - Next I have Specific Stack detail - Parameter : I have possibility to configure the IP address ranges before creating the stack
+- Next I have Specific Stack detail - Parameter : I have possibility to configure the IP address ranges before creating the stack
 
- - Then I will summary and create the Stack
+- Then I will summary and create the Stack
 
- - After stack created I will go to Output . Now If I go to Output , I am actually going to see 3 Resources or Components that I gonna need as Infomation for EKS Cluster
-```
+- After stack created I will go to Output . Now If I go to Output , I am actually going to see 3 Resources or Components that I gonna need as Infomation for EKS Cluster
 
 **What is EKS Cluster need to know?**
 
-```
- - EKS Cluster need to know which VPC of my AWS accounts I want to use to deploy Worker Nodes
+- EKS Cluster need to know which VPC of my AWS accounts I want to use to deploy Worker Nodes
 
- - We are also giving infomation about the Subnet ID in that VPC
+- We are also giving infomation about the Subnet ID in that VPC
 
- - Also the Security Group that I am using in that VPC . I can have Multiple Security Group so I need to tell EKS which one I use for Worker Node Group
+- Also the Security Group that I am using in that VPC . I can have Multiple Security Group so I need to tell EKS which one I use for Worker Node Group
 
- - I also need this Information when creating the EKS cluster (Control Plane)
-```
+- I also need this Information when creating the EKS cluster (Control Plane)
 
 **Wrap Up**
 
-```
- - So now I have a Role that will let EKS do things in my behalf in my AWS account to bacsically manage my Worker Nodes and other Resources.
+- So now I have a Role that will let EKS do things in my behalf in my AWS account to bacsically manage my Worker Nodes and other Resources.
 
- - And I have VPC in that my Worker Node will run
+- And I have VPC in that my Worker Node will run
 
- - With these 2 informations now I can Create EKS Cluster
-```
+- With these 2 informations now I can Create EKS Cluster
 
 ### Step 3 : Create EKS Cluster (Control Plane)
 
@@ -396,67 +381,59 @@ Step 8 : Deploy my App on Cluster
 
 **Configure Cluster**
 
-```
-   - Name -> Role Selection
+ - Name -> Role Selection
 
-   - Secrect Encryption: Secrect base64 encoded not very secure . I need to encrypt Secret . To encrypt Secret I need to install addition tools to do that . Also I can encrypt my secrect by using Secret Encryption provided by AWS
+ - Secrect Encryption: Secrect base64 encoded not very secure . I need to encrypt Secret . To encrypt Secret I need to install addition tools to do that . Also I can encrypt my secrect by using Secret Encryption provided by AWS
 
-   - AWS has a service for Encryption . In the Manage K8 Services , I basically have an option bcs AWS services they are all Intergrated, tightly intergrated with each other
-```
+ - AWS has a service for Encryption . In the Manage K8 Services , I basically have an option bcs AWS services they are all Intergrated, tightly intergrated with each other
 
 **Specify Networking**
 
 <img width="600" alt="Screenshot 2025-03-03 at 14 17 15" src="https://github.com/user-attachments/assets/cca45451-448a-46bc-8c81-8f4a04e9270d" />
 
-```
- - I need to Specify or give information to EKS about my Networking . Where are my Worker will run
+- I need to Specify or give information to EKS about my Networking . Where are my Worker will run
 
- - I will select the VPC I created for Worker Node in step 2
+- I will select the VPC I created for Worker Node in step 2
 
- - Also I will select the Security Group the one in VPC for Worker Node
+- Also I will select the Security Group the one in VPC for Worker Node
 
- ----Cluster Access Enpoint----
+----Cluster Access Enpoint----
 
- - Configure access to the Kubernetes API server endpoint
+- Configure access to the Kubernetes API server endpoint
 
- - API server is a entry point to my Cluster.
+- API server is a entry point to my Cluster.
 
- - Also API server is one of the Control Plane Processes so It is going to deployed and running inside the EKS VPC . AWS managed VPC . 
+- Also API server is one of the Control Plane Processes so It is going to deployed and running inside the EKS VPC . AWS managed VPC . 
 
- - Public endpoint : If I want to Connect or talk to K8 Cluster externally, Access API Server or the Cluster from Local Laptop by using CLI, Kubectl (Outside the both VPC) I need to enable Public Endpoint
+- Public endpoint : If I want to Connect or talk to K8 Cluster externally, Access API Server or the Cluster from Local Laptop by using CLI, Kubectl (Outside the both VPC) I need to enable Public Endpoint
 
- - Private enpoint : Enable Worker Nodes to communicate or connect to the Cluster Endpoint within my VPC network . So it enalbe the Control Plane and the Worker Node to talk to each other through my VPC . So the Network interface will get created in my VPC that would enable the traffic to go from my Worker Node through our VPC directly to the Control Plane Node
+- Private enpoint : Enable Worker Nodes to communicate or connect to the Cluster Endpoint within my VPC network . So it enalbe the Control Plane and the Worker Node to talk to each other through my VPC . So the Network interface will get created in my VPC that would enable the traffic to go from my Worker Node through our VPC directly to the Control Plane Node
 
- - I can choose Public and Private mode to have Both
-```
+- I can choose Public and Private mode to have Both
 
 **Configure logging**
 
-```
- - This is a Configuration Logging for my Control Plane
+- This is a Configuration Logging for my Control Plane
 
- - I able to decide if I want to see the Logs that come from the Master Processes (Logging on the Control Plane):
+- I able to decide if I want to see the Logs that come from the Master Processes (Logging on the Control Plane):
 
-   -- All the Request API Server, Authentication Event, What the Controller Manager does, Sheduler does
+  -- All the Request API Server, Authentication Event, What the Controller Manager does, Sheduler does
 
-   -- Managed by AWS
-```
+  -- Managed by AWS
 
 **AWS add-on**
 
-```
-  - Core-DNS : Kubernetes Process is going to add DNS services to my EKS Cluster . This way I will able to use DNS name inside the Cluster to communicate instead of using the IP address
+ - Core-DNS : Kubernetes Process is going to add DNS services to my EKS Cluster . This way I will able to use DNS name inside the Cluster to communicate instead of using the IP address
 
-  - Kube-Proxy : Manage Networking tasks like routing in my Cluster . Kube-proxy will run on all of My Nodes and forward all the traffics between Services and Pods using these Routing Rules and make sure all the part of the CLuster can Communicate
+ - Kube-Proxy : Manage Networking tasks like routing in my Cluster . Kube-proxy will run on all of My Nodes and forward all the traffics between Services and Pods using these Routing Rules and make sure all the part of the CLuster can Communicate
 
-  - Amazon VPC CNI(Container Network Interface ) :
+ - Amazon VPC CNI(Container Network Interface ) :
 
-   -- Enable easier communication my My Cluster . It will create Network Layers within the Cluster, so that all the Pods running on all these different Nodes will communicate with each other as if they were running on the same Server (The same local network) .
+  -- Enable easier communication my My Cluster . It will create Network Layers within the Cluster, so that all the Pods running on all these different Nodes will communicate with each other as if they were running on the same Server (The same local network) .
 
-   -- CNI Plugin will basically allocate the Pods's the IP addresses from the IP address Range allocated to the Cluster through the AWS VPC . So this way my Pods able to communicate to any Resources if needed
+  -- CNI Plugin will basically allocate the Pods's the IP addresses from the IP address Range allocated to the Cluster through the AWS VPC . So this way my Pods able to communicate to any Resources if needed
 
- - Amazon GuardDuty : Can detect any Security Threats and make them Available in another AWS service 
-```
+- Amazon GuardDuty : Can detect any Security Threats and make them Available in another AWS service 
 
 **Summary and Create EKS Cluster**
 
@@ -468,13 +445,11 @@ Step 8 : Deploy my App on Cluster
 
 **Configure Kubectl to connect to EKS Cluster**
 
-```
  Step 1: To see AWS configure detail : `aws configure list`
 
  Step 2: To create kubeconfig file locally : `aws eks update-kubeconfig --name <cluster-name>`
 
    -- --name : Connection info for Cluster . Which is the Cluster Name
-```
 
  - After Created kubeconfig file my Local machine already connected to AWS K8 Cluster. The file will store in .kube/config
 
@@ -499,17 +474,15 @@ Step 8 : Deploy my App on Cluster
 
 **Detail Overview**
 
-```
- - API Server endpoint : This is where K8 API Server accessible at
+- API Server endpoint : This is where K8 API Server accessible at
 
- - Bcs I selected Public I can access this Enpoint from External Client
+- Bcs I selected Public I can access this Enpoint from External Client
 
- ----Cluster IAM Role ARN----
+----Cluster IAM Role ARN----
 
- - Role that I assigned in the Cluster
+- Role that I assigned in the Cluster
 
- - Cluster ARN : EKS Cluster unique ID 
-```
+- Cluster ARN : EKS Cluster unique ID 
 
 **Compute**
 
