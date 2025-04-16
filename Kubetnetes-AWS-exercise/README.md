@@ -153,7 +153,29 @@ kubectl create secret docker-registry <my-secrect-name> \
 
 I create Secret Component to store DB_USER, DB_NAME 
 
+```
+apiVersion: v1
+kind: Secret
+metadata: 
+  name: java-secret
+type: Opaque 
+data: 
+  DB_USER: dGlt
+  DB_NAME: bXktYXBwLWRi
+```
+
 And I create Configmap to store DB_URL_SERVER
+
+```
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: java-configmap
+data: 
+  database_server: "mysql-primary-0:mysql-primary-headless"
+```
+
+
 
 
 
