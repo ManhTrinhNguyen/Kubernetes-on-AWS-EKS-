@@ -134,8 +134,26 @@ If I use **Terraform** I can use this : `enable_ebs_csi_driver = true`
 
 ## Deploy Java Application 
 
+I have Java Image in my ECR Private Repo
 
+To pull Image From ECR are I need to create Secret Component containe access token and crenditals to my ECR 
+ 
+Configure Deployment to use that Secret using Attribute called `imagePullSecrets` 
 
+#### To Create Secret Component 
+
+```
+kubectl create secret docker-registry <my-secrect-name> \
+--docker-server=https://565393037799.dkr.ecr.us-west-1.amazonaws.com
+--docker-username=AWS
+--docker-password=aws ecr get-login-password --region us-west-1
+```
+
+#### ENV For Container to connect to DB 
+
+I create Secret Component to store DB_USER, DB_NAME 
+
+And I create Configmap to store DB_URL_SERVER
 
 
 
