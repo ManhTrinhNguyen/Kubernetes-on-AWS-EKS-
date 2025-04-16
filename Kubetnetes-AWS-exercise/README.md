@@ -125,8 +125,12 @@ Step 3 : Confirm the EBS CSI driver is installed : `kubectl get pods -n kube-sys
   ebs-csi-controller-xxxx        Running
   ebs-csi-node-xxxxx             Running
   ```
+**Wrap up**
+
+Every application (pod) runs under a ServiceAccount. If I want it to do something — inside the cluster or outside (like AWS APIs) — I need to give that ServiceAccount the right permissions or attach a role
 
 If I use **Terraform** I can use this : `enable_ebs_csi_driver = true`
+
 
 ## Deploy Java Application 
 
