@@ -85,6 +85,49 @@ secondary:
     size: 20Gi
 ```
 
+EKS need certain Perrmission to allow Kubernetes to provision EBS Volumns dynamically when using `storgeClass: gp2 or gp3`
+
+I need to install add-on EBS CSI Driver installed (Must be installed in my Cluster)
+
+  - This driver actually talks to AWS EBS API to Create Volume, Attach them to Pod, Resize, delete them
+
+EBS CSI Driver need an IAM Role with these Permission in AWS-managed policy `AmazonEBSCSIDriverPolicy`
+
+Step 1 : Creates the IAM Role and links it to the Kubernetes service account via an OIDC provider.
+
+```
+eksctl create iamserviceaccount \
+  --name ebs-csi-controller-sa \
+  --namespace kube-system \
+  --cluster $CLUSTER_NAME \
+  --attach-policy-arn arn:aws:iam::aws:policy/service-role/AmazonEBSCSIDriverPolicy \
+  --approve \
+  --role-name AmazonEKS_EBS_CSI_DriverRole
+```
+
+  - Service Account is Application User . As the same way for human User I can link Service Account to Role or ClusterRole with RoleBinding or ClusterRoleBinding, And with binding service account or the Application that is behind that Service account will get Permission that are defined in the Role or Cluster Role
+
+Step 2 : Install the EBS CSI driver as an EKS Add-on and attach the IRSA role
+
+```
+eksctl create addon \
+  --name aws-ebs-csi-driver \
+  --cluster $CLUSTER_NAME \
+  --service-account-role-arn arn:aws:iam::<YOUR_AWS_ACCOUNT_ID>:role/AmazonEKS_EBS_CSI_DriverRole \
+  --force
+```
+
+Step 3 : Confirm the EBS CSI driver is installed : `kubectl get pods -n kube-system -l app.kubernetes.io/name=aws-ebs-csi-driver` 
+
+  - I should see something like
+    
+  ```
+  ebs-csi-controller-xxxx        Running
+  ebs-csi-node-xxxxx             Running
+  ```
+
+If I use **Terraform** I can use this : `enable_ebs_csi_driver = true`
+
 ## Deploy Java Application 
 
 
