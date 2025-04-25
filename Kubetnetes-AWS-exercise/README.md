@@ -3,6 +3,8 @@
 - [Deploy Mysql for Production](#Deploy-Mysql-for-Production)
 
 - [Deploy Java Application](#Deploy-Java-Application)
+
+- [Setup Continuous Deployment with Jenkins](#Setup-Continuous-Deployment-with-Jenkins)
   
 # AWS-EKS 
 
@@ -197,6 +199,15 @@ data:
   database_server: "mysql-primary-0:mysql-primary-headless"
 ```
 
+I have a `CrashLoopBackOff` means:
+
+ - Your Pod starts → crashes → restarts → crashes again, and this keeps happening in a loop.
+
+ - To know happen I use `kubectl logs <pod-name>`
+
+ - Or I can use `kubectl describe pod <pod-name>` to see events of the pod generating
+
+## Setup Continuous Deployment with Jenkins
 
 
 
