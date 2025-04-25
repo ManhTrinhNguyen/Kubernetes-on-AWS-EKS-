@@ -1,6 +1,24 @@
+- [Deploy Mysql](Deploy-Mysql)
+- 
 # AWS-EKS 
 
 ## Create EKS Cluster . 
+
+#### Connect kubectl locally with EKS Cluster
+
+Eventhough I don't have Worker Nodes yet . I can still can talk to the API Server bcs Control Plane is running
+
+They way to connect is create kubeconfig file for newly created EKS Cluster
+
+Configure Kubectl to connect to EKS Cluster
+
+Step 1: To see AWS configure detail : `aws configure list`
+
+Step 2: To create kubeconfig file locally : `aws eks update-kubeconfig --name <cluster-name>`
+
+-- --name : Connection info for Cluster . Which is the Cluster Name
+
+ - After Created kubeconfig file my Local machine already connected to AWS K8 Cluster. The file will store in `.kube/config`
 
 ## Deploy Mysql and phpmyadmin 
 
