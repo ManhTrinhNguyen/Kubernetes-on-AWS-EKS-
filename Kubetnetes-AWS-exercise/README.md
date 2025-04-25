@@ -1,4 +1,4 @@
-- [Deploy Mysql and phpmyadmin](Deploy-Mysql-and-phpmyadmin)
+- [Deploy Mysql and phpmyadmin](#Deploy-Mysql-and-phpmyadmin)
   
 # AWS-EKS 
 
