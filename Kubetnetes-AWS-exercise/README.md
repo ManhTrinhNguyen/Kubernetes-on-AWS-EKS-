@@ -1,4 +1,8 @@
-- [Deploy Mysql and phpmyadmin](#Deploy-Mysql-and-phpmyadmin)
+- [Deploy Mysql](#Deploy Mysql)
+
+- [Deploy Mysql for Production](#Deploy-Mysql-for-Production)
+
+- [Deploy Java Application](#Deploy-Java-Application)
   
 # AWS-EKS 
 
