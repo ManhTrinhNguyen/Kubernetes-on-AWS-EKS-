@@ -1,4 +1,4 @@
-- [Deploy Mysql](#Deploy Mysql)
+- [Deploy Mysql](#Deploy-Mysql)
 
 - [Deploy Mysql for Production](#Deploy-Mysql-for-Production)
 
