@@ -1,5 +1,5 @@
-- [Deploy Mysql](Deploy-Mysql)
-- 
+- [Deploy Mysql and phpmyadmin](Deploy-Mysql-and-phpmyadmin)
+  
 # AWS-EKS 
 
 ## Create EKS Cluster . 
