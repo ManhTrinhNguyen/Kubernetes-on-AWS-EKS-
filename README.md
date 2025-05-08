@@ -649,17 +649,39 @@ Step 8 : Deploy my App on Cluster
 
 - Fault Tolerance : Reduce risk of downtime caused by unpredictabke failure, such as hardware
 
-- Avoid Scaling delay : Scaling out take time, especially if instances need to be initialized and configured 
+- Avoid Scaling delay : Scaling out take time, especially if instances need to be initialized and configured
+
+#### Kubenetes Cluster Autoscaler 
+
+Cluster Auto Scaler is Kubernetes Component that automatically scale my Worker up and down base on my Min, Max
+
+Cluster Autoscaler need to create and delete EC2 Instances on AWS in order to scale my Cluster . In order to do that it needs to connect to the AWS API and trigger those actions 
+
+<img width="599" alt="Screenshot 2025-05-07 at 17 31 51" src="https://github.com/user-attachments/assets/69e5751a-3d07-4e6a-855f-765ad8fe5c0b" />
+
+Now The Cluster autoscaler in Kubernetes will have a Service Account which is basically like a Role in Kubernetes . And that Service account is also a Kubernetes Component and not an AWS service . And in AWS, IAM roles normally only work betweens AWS Service . Basically question is how do we breach this gap between a Kubernetes component making calls to an AWS service and getting permission to do so 
+
+For that we need to establish trust between AWS and our Kubernetes cluster using OIDC = identity provider 
+
+Think of introducing 2 systems to each other so AWS and Kubernetes, and saying hey, You two can trust each other . In order to do that first, we configure an OIDC provider in our AWS account for our EKS Cluster . And this basically will say, AWS please trust tokens that come from this specific Kubernetes Cluster . And this is important for security so that not any component from any Kubernetes cluster can just do stuff in our AWS Account 
+
+Once I have created OIDC Provider, so establish this trust saying AWS, hey can you trust this specific EKS Cluster . 
+
+Next we Create an IAM role that has a Policy attached allowing EC2 Instance creation and deletion . When we create this role, we configure it with a web identity. So instead of AWS service role, we create a web identity role that point to our OIDC provider and we do this always when we are creating IAM role for a thrid party component or a non -AWS Service application like Kubernetes 
+
+So once we have made all this configuration now when the cluster Autoscaler service account wants to create EC2 Instances or delete EC2 to scale down the cluster, it basically send a request to AWS saying, I would like to assume this AWS IAM role in order to be able to do that . AWS then checks the roken that came with the request verifies that it was issued by our trusted EKS Cluster that it now trust bcs of the OIDC configuration . And with this role temporaily assumed the cluster autoscaler can now create or delete EC2 instances or basically send API request to AWS to create or delete EC2 .
+
+This whole setup is really import for security bcs we are not just giving blanket permissions so that any cluster can do stuff in our AWS but we creating specific trust relationship that allow only specific Kubernetes components or cluster components to access only specific AWS resources 
 
 **Things need to do in order to configure Autoscaler**
 
-- First: Autoscaling Group (Can change Min and Max anytime)
+First: Autoscaling Group (Can change Min and Max anytime)
 
-- Second : Create Auto Scaler Policy . Then Create a Auto Scaler Role, then I use OIDC federated authentication allows your service to assume an IAM role and interact with AWS services without having to store credentials as environment variables. .Then attach that Role to Service Account 
+Second : Create a Role so that our autoscaling group can scale up and scale down the number of EC2 when required 
 
-- Third : Deploy Cluster AutoScaler 
+ - Basically for the Autoscaling to work we need to give the Autoscaler pod inside the Cluster certain permissions to make AWS API calls
 
-**Create custom Autoscaler Policy for my NodeGroup**
+#### Create custom Autoscaler Policy for my NodeGroup
 
 - IAM -> go to Policy -> go to Create Policy -> Choose JSON then paste the custom list of Policy in there -> Then give it a name and create it
 
@@ -698,13 +720,15 @@ Step 8 : Deploy my App on Cluster
   }
   ```
 
-- Custome list is the one that has a list of all the Permissions that we need to give NodeGroup IAM role for the autoscaling to work
+Custome list is the one that has a list of all the Permissions that we need to give NodeGroup IAM role for the autoscaling to work
 
-- After Policy created . Create OIDC for authentication
+After Policy created . Create OIDC for authentication . This is a connection between AWS IAM and my Cluster  
 
-**Create OIDC Provider**
+We need a way for AWS to authenticate with our Cluster to tell AWS to trust tokens that are issued by our Kubernetes Cluster 
 
-- OIDC federated authentication allows your service to assume an IAM role and interact with AWS services without having to store credentials as environment variables.
+#### Create OIDC Provider
+
+In my EKS Cluster in overview section I can see my EKS `OpenID connect provider URL`. This let AWS know that when a Service account inside the Cluster tries to assume a role, an AWS role, it can allow it . But only if the token is valid and comes from our Cluster, which is identified with this URL 
 
 - **Prerequisites**
   
@@ -712,62 +736,61 @@ Step 8 : Deploy my App on Cluster
 
   - Cluster must consist of at least one worker node ASG.
  
-- **Create an IAM OIDC identity provider for your cluster with the AWS Management Console**
+#### Create an IAM OIDC identity provider for your cluster with the AWS Management Console
 
-  - Open the Amazon EKS console.
+Open the Amazon EKS console.
   
-  - In the left pane, select Clusters, and then select the name of your cluster on the Clusters page.
+In the left pane, select Clusters, and then select the name of your cluster on the Clusters page.
   
-  - In the Details section on the Overview tab, note the value of the OpenID Connect provider URL.
+In the Details section on the Overview tab, note the value of the OpenID Connect provider URL.
   
-  - Open the IAM console at https://console.aws.amazon.com/iam/.
+Open the IAM console at: https://console.aws.amazon.com/iam/.
   
-  - In the left navigation pane, choose Identity Providers under Access management. If a Provider is listed that matches the URL for your cluster, then you already have a provider for your cluster. If a provider isn’t listed that matches the URL for your cluster, then you must create one.
+In the left navigation pane, choose Identity Providers under Access management. If a Provider is listed that matches the URL for your cluster, then you already have a provider for your cluster. If a provider isn’t listed that matches the URL for your cluster, then you must create one.
   
-  - To create a provider, choose Add provider.
+To create a provider, choose Add provider.
   
-  - For Provider type, select OpenID Connect.
+For Provider type, select OpenID Connect.
   
-  - For Provider URL, enter the OIDC provider URL for your cluster.
+For Provider URL, enter the OIDC provider URL for your cluster.
   
-  - For Audience, enter sts.amazonaws.com.
+For Audience, enter sts.amazonaws.com.
+
+ - Stand for Security Token Service . And it ensures that tokens is only used for this purpose, for authentication 
   
-  - (Optional) Add any tags, for example a tag to identify which cluster is for this provider.
+(Optional) Add any tags, for example a tag to identify which cluster is for this provider.
   
-  - Choose Add provider.
+Choose Add provider.
+  
+#### Create an IAM role for your service accounts in the console 
+
+Retrieve the OIDC issuer URL from the Amazon EKS console description of your cluster . It will look something identical to: 'https://oidc.eks.us-east-1.amazonaws.com/id/xxxxxxxxxx'
+   
+While creating a new IAM role, In the "Select type of trusted entity" section, choose "Web identity".
+   
+In the "Choose a web identity provider" section: For Identity provider, choose the URL for your cluster. For Audience, type sts.amazonaws.com.
+
+ - This is going to authenticate and establish a trust between our EKS Cluster or Kubernetes Cluster and the AWS account. 
+   
+In the "Attach Policy" section, select the policy to use for your service account, that you created above
+   
+After the role is created, choose the role in the console to open it for editing.
+   
+Choose the "Trust relationships" tab, and then choose "Edit trust relationship". Edit the OIDC provider suffix and change it from :aud to :sub. Replace sts.amazonaws.com to your service account ID.
  
-- **Create a test IAM policy for your service accounts.**
-
-   - I Already created in **Create custom Autoscaler Policy for my NodeGroup**
-  
-- **Create an IAM role for your service accounts in the console.**
-
-   - Retrieve the OIDC issuer URL from the Amazon EKS console description of your cluster . It will look something identical to: 'https://oidc.eks.us-east-1.amazonaws.com/id/xxxxxxxxxx'
+  - Service Account ID is : `system:serviceaccount:<namespace>:<service-account-name>`.  
    
-   - While creating a new IAM role, In the "Select type of trusted entity" section, choose "Web identity".
-   
-   - In the "Choose a web identity provider" section: For Identity provider, choose the URL for your cluster. For Audience, type sts.amazonaws.com.
-   
-   - In the "Attach Policy" section, select the policy to use for your service account, that you created in Section B above.
-   
-   - After the role is created, choose the role in the console to open it for editing.
-   
-   - Choose the "Trust relationships" tab, and then choose "Edit trust relationship". Edit the OIDC provider suffix and change it from :aud to :sub. Replace sts.amazonaws.com to your service account ID.
- 
-     - Service Account ID is : `system:serviceaccount:<namespace>:<service-account-name>`.  
-   
-   - Update trust policy to finish. 
+Update trust policy to finish. 
 
 **Configure Tags on Autoscaling Group . Automate created by AWS**
 
-- Tags are also use in order for different Services or Component to Read and Detect some Information from each other . This is one of the case where we have Tags that auto scaler that we will deploy inside Kubernetes will require to auto Discover Autoscaling group in the AWS account . So the Cluster Autoscaler Component, which I gonna deploy inside Kubernetes Cluster, needs to communicate with auto scaling group . For this communication to happen the Cluster auto Scaler first needs to detect the auto scaling group from AWS . And it happen by using these 2 tags : k8s.io/cluster-autoscaler/eks-cluster-test, k8s.io/cluster-autoscaler/enable
+Tags are also use in order for different Services or Component to Read and Detect some Information from each other . This is one of the case where we have Tags that auto scaler that we will deploy inside Kubernetes will require to auto Discover Autoscaling group in the AWS account . So the Cluster Autoscaler Component, which I gonna deploy inside Kubernetes Cluster, needs to communicate with auto scaling group . For this communication to happen the Cluster auto Scaler first needs to detect the auto scaling group from AWS . And it happen by using these 2 tags : k8s.io/cluster-autoscaler/eks-cluster-test, k8s.io/cluster-autoscaler/enable
 
 **Deploy Cluster Autoscaler**
 
+Using : kubectl apply -f <Autoscaler-Deployment-file> : ( https://raw.githubusercontent.com/kubernetes/autoscaler/master/cluster-autoscaler/cloudprovider/aws/examples/cluster-autoscaler-autodiscover.yaml )
 
-- Using : kubectl apply -f <Autoscaler-Deployment-file> : ( https://raw.githubusercontent.com/kubernetes/autoscaler/master/cluster-autoscaler/cloudprovider/aws/examples/cluster-autoscaler-autodiscover.yaml )
-
-- In that Yamlfile :
+In that Yamlfile :
 
   - In the command part I have the Configuration where NodeGroup auto discover is configured using these tags : --node-group-auto-discovery=asg:tag=k8s.io/cluster-autoscaler/enabled,k8s.io/cluster-autoscaler/<YOUR CLUSTER NAME>
 
@@ -796,25 +819,28 @@ Step 8 : Deploy my App on Cluster
   - Change Image version : Image version have to match with EKS Cluster Version
 
   - In the Command level add : --balance-similar-node-groups and --skip-nodes-with-system-pods=false
+ 
+  - The next thing I need to add is in Deployment component : `cluster-autoscaler.kubernetes.io/safe-to-evict: "false"` . This mean that Autoscaler will not accidentally evict itself when scaling down nodes, which would mean that Auto scaler will not be able to manage the Cluster Anymore . So we are trying to prevent this by setting this annotation to false 
 
-- To check pods in kube-system namespace : kubectl get pod -n kube-system
+To check pods in kube-system namespace : kubectl get pod -n kube-system
 
- - In Kube-system For each Node I have these processes : KubeProxy (One of Worker Proccess) and awsNodes proccesses run on each Nodes, , DNScore no need to sit on every Nodes . Also I can see autoScaler pod run in one of Intances as well
+In Kube-system For each Node I have these processes : KubeProxy (One of Worker Proccess) and awsNodes proccesses run on each Nodes, , DNScore no need to sit on every Nodes . Also I can see autoScaler pod run in one of Intances as well
 
- - If I add another Node these awsNoes and KubeProxy Pods will get scheduled on the new Node as well
+If I add another Node these awsNoes and KubeProxy Pods will get scheduled on the new Node as well
 
-- To see Which Instances run the Autoscaler : `kubectl get pods -n kube-system <autoscaler-pod-name> -o wide`, then I get the Node name so I can see its logs : `kubectl logs <Node-name>` .
-- To make a logs easier to read : `kubectl logs <Node-name> > as-logs.txt`
+To see Which Instances run the Autoscaler : `kubectl get pods -n kube-system <autoscaler-pod-name> -o wide`, then I get the Node name so I can see its logs : `kubectl logs <Node-name>` .
 
- - In the Logs I can see couple of time of Caculating no need Node, Scale down started , No candidate for Scale Down
+To make a logs easier to read : `kubectl logs <Node-name> > as-logs.txt`
 
- - To test it I change the Autoscaling Group min to 1 . Once the NodeGroup Configuration get Updated and the Autoscaler run again to reevalute the status . I can see that NodeGroup will scale to down to just 1 Instances . Now that Autoscaler has run again with a new configuration .
+In the Logs I can see couple of time of Caculating no need Node, Scale down started , No candidate for Scale Down
 
-  - After the Configuration changed to Autoscaler started scale down processes . Here I see autoscaler will check out the Nodes in the AutoScaling Group and as part of the Scale down processes, it will actually analyze when the Instaces were last used . After this evaluation, the Preparing for removing this Nodes will actually get started . And I can see a Auto Scaling Pod from my Cluster is being moved to another Node. So Autoscaler decided lets move the Node right here, which happen to be the First one of the two and the AutoScaler itself was scheudeded in that Node so it need to move that Pod to another Node
+To test it I change the Autoscaling Group min to 1 . Once the NodeGroup Configuration get Updated and the Autoscaler run again to reevalute the status . I can see that NodeGroup will scale to down to just 1 Instances . Now that Autoscaler has run again with a new configuration .
 
-  - Also at the begining each EC2 Instances or Worker Node has its own default process running there . These processes are there when EC2 initilized and these are Kubernetess Processes
+After the Configuration changed to Autoscaler started scale down processes . Here I see autoscaler will check out the Nodes in the AutoScaling Group and as part of the Scale down processes, it will actually analyze when the Instaces were last used . After this evaluation, the Preparing for removing this Nodes will actually get started . And I can see a Auto Scaling Pod from my Cluster is being moved to another Node. So Autoscaler decided lets move the Node right here, which happen to be the First one of the two and the AutoScaler itself was scheudeded in that Node so it need to move that Pod to another Node
 
-  - Toward down the part of Logs . The pod are actually get deleted as part of the process so I can see this Clean up message
+Also at the begining each EC2 Instances or Worker Node has its own default process running there . These processes are there when EC2 initilized and these are Kubernetess Processes
+
+Toward down the part of Logs . The pod are actually get deleted as part of the process so I can see this Clean up message
 
 ----Advantage----
 
