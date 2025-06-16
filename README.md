@@ -1,3 +1,66 @@
+- [Container Services on AWS](#Container-Services-on-AWS)
+
+- [ECS Elastic Container Service](#ECS-Elastic-Container-Service)
+
+- [Elastic Kubernetes Service EKS](#Elastic-Kubernetes-Service-EKS)
+
+- [ECR Elastic Container Registry](#ECR-Elastic-Container-Registry)
+
+- [Create EKS Cluster UI](#Create-EKS-Cluster-UI)
+
+  - [Step 1 Create EKS IAM role](#Step-1-Create-EKS-IAM-role)
+ 
+  - [Step 2 Create VPC for Worker Nodes](#Step-2-Create-VPC-for-Worker-Nodes)
+ 
+  - [Step 3 Create EKS Cluster Control Plane](#Step-3-Create-EKS-Cluster-Control-Plane)
+ 
+  - [Step 4 Connect kubectl locally with EKS Cluster](#Step-4-Connect-kubectl-locally-with-EKS-Cluster)
+ 
+  - [Cluster Overview Cluster Node](#Cluster-Overview-Cluster-Node)
+ 
+  - [Step 5 Create EC2 IAM Role for my Node Group](#Step-5-Create-EC2-IAM-Role-for-my-Node-Group)
+ 
+  - [Step 6 Add NodeGroup to EKS Cluster](#Step-6-Add-NodeGroup-to-EKS-Cluster)
+
+- [Configure Auto Scaling in EKS Cluster](#Configure-Auto-Scaling-in-EKS-Cluster)
+
+  - [Kubenetes Cluster Autoscaler](#Kubenetes-Cluster-Autoscaler)
+ 
+  - [Create custom Autoscaler Policy for my NodeGroup](#Create-custom-Autoscaler-Policy-for-my-NodeGroup)
+ 
+  - [Create OIDC Provider](#Create-OIDC-Provider)
+ 
+  - [Create an IAM OIDC identity provider for your cluster with the AWS Management Console](#Create-an-IAM-OIDC-identity-provider-for-your-cluster-with-the-AWS-Management-Console)
+ 
+  - [Create-an-IAM-role-for-your-service-accounts-in-the-console](#Create-an-IAM-role-for-your-service-accounts-in-the-console)
+ 
+- [Create EKS Cluster with Fargate Profile](#Create-EKS-Cluster-with-Fargate-Profile)
+
+  - [Create Fargate](#Create-Fargate)
+ 
+  - [Deploy Pod through Fargate](#Deploy-Pod-through-Fargate)
+ 
+- [EKS Cluster with eksctl CLI](#EKS-Cluster-with-eksctl-CLI)
+
+- [Deploy to EKS Cluster from Jenkins Pipeline](#Deploy-to-EKS-Cluster-from-Jenkins-Pipeline)
+
+  - [Step 1 Install kubectl inside Jenkins Container](#Step-1-Install-kubectl-inside-Jenkins-Container)
+ 
+  - [Step 2 Install AWS IAM Authenticator](#Step-2-Install-AWS-IAM-Authenticator)
+ 
+  - [Step 3 Create Kubeconfig file for Jenkins](#Step-3-Create-Kubeconfig-file-for-Jenkins)
+ 
+  - [Step 4 Create AWS Credentials](#Step-4-Create-AWS-Credentials)
+ 
+  - [Step 5 Create Jenkins file](#Step-5-Create-Jenkins-file)
+ 
+- [Deploy to LKE Cluster from Jenkins Pipelines](#Deploy-to-LKE-Cluster-from-Jenkins-Pipelines)
+
+- [Complete CI CD Pipeline with EKS And Dockerhub](#Complete-CI-CD-Pipeline-with-EKS-And-Dockerhub)
+
+- [Complete CI CD Pipeline with EKS And ECR](#Complete-CI-CD-Pipeline-with-EKS-And-ECR)
+  
+
 # Kubernetes-on-AWS-EKS
 
 ## Overview 
@@ -118,7 +181,7 @@
 
 <img width="600" alt="Screenshot 2025-02-28 at 13 02 43" src="https://github.com/user-attachments/assets/755850a0-1838-45b1-a08a-881fc9842828" />
 
-## Elastic Kubernetes Service (EKS)
+## Elastic Kubernetes Service EKS
 
 - Managing Kubernetes Cluster on AWS infrastructure
 
@@ -201,7 +264,7 @@ Step 4 : Once it done I can simply connect to the Cluster using Kubectl command 
 - Now I have NodeGroup and NodeGroup connected and that give me EKS Cluster
 
 
-## ECR (Elastic Container Registry)
+## ECR Elastic Container Registry
 
 - This is a Repository for Container Images
 
@@ -218,7 +281,7 @@ Step 4 : Once it done I can simply connect to the Cluster using Kubectl command 
 - Create Private Repo for different Application Images and I can start pushing different version or different tag of the Images 
 
 
-## Create EKS Cluster (UI)
+## Create EKS Cluster UI
 
 **Steps to create EKS Cluster**
 
@@ -241,7 +304,7 @@ Step 7 : Configure Auto Scaling for K8 Cluster : Based on resources required by 
 
 Step 8 : Deploy my App on Cluster 
 
-### Step 1 : Create EKS IAM role
+### Step 1 Create EKS IAM role
 
  - I will create a Role in my AWS account that will have permissions attached to it and I will give that Role to AWS services outside my own Account, This will be services EKS that managed by AWS to Manage, Create components on my AWS account on my behalf
 
@@ -256,7 +319,7 @@ Step 8 : Deploy my App on Cluster
  !!! Note : IAM service is not defined per Region but It is global for my Whole Account 
 
 
-### Step 2 : Create VPC for Worker Nodes
+### Step 2 Create VPC for Worker Nodes
 
  - In AWS I have default VPC that AWS created for me in every Region
 
@@ -375,7 +438,7 @@ Step 8 : Deploy my App on Cluster
 
 - With these 2 informations now I can Create EKS Cluster
 
-### Step 3 : Create EKS Cluster (Control Plane)
+### Step 3 Create EKS Cluster Control Plane
 
 - In the UI go to EKS
 
@@ -455,7 +518,7 @@ Step 8 : Deploy my App on Cluster
 
 **Summary and Create EKS Cluster**
 
-### Step 4 : Connect kubectl locally with EKS Cluster 
+### Step 4 Connect kubectl locally with EKS Cluster 
 
 - Eventhough I don't have Worker Nodes yet . I can still can talk to the API Server bcs Control Plane is running
 
@@ -488,7 +551,7 @@ Step 8 : Deploy my App on Cluster
 
  - **To see Info of K8 Cluster**: `kubectl cluster-info` -> I Will have the Cluster endpoint . Which is the same endpoint in Detail (UI)
 
-### Cluster Overview - Cluster Node 
+### Cluster Overview Cluster Node 
 
 **Detail Overview**
 
@@ -522,7 +585,7 @@ Step 8 : Deploy my App on Cluster
   - That mean that Control Plane is running it's managed by AWS . and I have to created Worker Node and connects those Worker Node to the Control Plane 
 ```
 
-### Step 5:  Create EC2 IAM Role for my Node Group 
+### Step 5 Create EC2 IAM Role for my Node Group 
 
 ```
  - I want to create NodeGroup instead of individual Instance Worker Node bcs if I want to create 100 Instances at 1 time it will very cost time .
@@ -557,7 +620,7 @@ Step 8 : Deploy my App on Cluster
      - This has access to EC2 services . All Actions can perform on that Services . Baciscally CNI is a Container Network Interface. CNI is internal network in Kubernetes . So that Pod in different Servers can communicate with each other . No matter they are on Worker Nodes or Control Plane Nodes or which of those Node they are located . I am giving that role access to the CNI policy so that it can interact with other Worker Nodes 
 
 
-### Step 6 : Add NodeGroup to EKS Cluster 
+### Step 6 Add NodeGroup to EKS Cluster 
 
 - Step 1: Goto EKS Compute -> Add Node Group -> Select the Role that will give Node Group and EC2 Instaces in that Node Group Permission for interacting with other AWS Services
 
@@ -1093,7 +1156,7 @@ Instances that is Worker Nodes behinds this load balancer
  - Step 5 : Adjust Jenkinsfile to configure EKS cluster deployment
 
 
-### Step 1 : Install kubectl inside Jenkins Container
+### Step 1 Install kubectl inside Jenkins Container
 
  - Connect to a Server : `ssh root@...`
 
@@ -1106,7 +1169,7 @@ Instances that is Worker Nodes behinds this load balancer
    - As I learned in Jenkins Moudule . Whenever I need some CLI tools execute commands with inside our Pipelines I can install them directly on a Jenkins Server or inside a Jenkins container and they will be available as Linux Command inside the Pipeline I can execute them pretty simply .
   
 
-### Step 2 : Install AWS IAM Authenticator 
+### Step 2 Install AWS IAM Authenticator 
 
  - This is Specific to AWS . When I created EKS Cluster I got a Kubeconfig which contain for the Secret and all the certificate for authenticating and connecting, it also container the infomation to a Cluster on AWS specificly to EKS Cluster . So I will provide all the credentials, however I need kubectl and aws-iam-authenticator both to acctually connect to EKS cluster and authenticate to it from Jenkins
 
@@ -1120,7 +1183,7 @@ Instances that is Worker Nodes behinds this load balancer
  mv ./aws-iam-authenticator /usr/local/bin
  ```
 
-### Step 3 : Create Kubeconfig file for Jenkins
+### Step 3 Create Kubeconfig file for Jenkins
 
  - I don't have the editor inside the Jenkins Container bcs it is a lightweight container . I will create the file outside on the Host and I just simple copy the file into Jenkin Container
 
@@ -1164,7 +1227,7 @@ users:
  - Then copy config file from host to Jenkins : `docker cp config container-id:/var/jenkins_home/.kube/`
 
 
-### Step 4 : Create AWS Credentials 
+### Step 4 Create AWS Credentials 
 
  - Need Credentials for AWS Users . Locally I have work with the Admin User which is AWS User with its own secret key ID and access key . I need to configure the same for Jenkins
 
@@ -1176,7 +1239,7 @@ users:
 
    - Locally my Credentials live here : `.aws/credentials`
   
-### Step 5 : Create Jenkins file 
+### Step 5 Create Jenkins file 
 
 <img width="600" alt="Screenshot 2025-03-21 at 10 56 21" src="https://github.com/user-attachments/assets/c59995c3-dc95-43b8-8c82-6ab3dbe0d125" />
 
@@ -1240,9 +1303,7 @@ users:
   
   - serverUrl : Is tell kubectl where to connect to
 
-
 ## Credentials on Jenkins 
-
 
  - 1 thing from configuring credentials in Jenkins . As I saw in our example I have configured credentials for EC2 instances inside Jenkins so I could deploy on EC2 Server . I have have also configure Kubernetes credentials as kubeconfig file to connect  to K8 Cluster
 
@@ -1250,7 +1311,7 @@ users:
 
  - Same way created Kubernetes credential using Kubeconfig that Kubernetes admin user is using . So basically have all the Permission to execute stuff and configure stuff in Kubernetes . An Alternative here would be to create a Jenkins user in Kubernetes . In Kubernetes user are called Service Account . So basically create a Jenkins Service account and give it only the Permission that Jenkins needs which is just deploying a new Application , create deployment kind and maybe some other stuff . For example if it doesn't need to delete anything I may limit permission of the Jenkins service account and then I would create Credentials for Jenkins user inside K8 Cluster with user token 
 
-### Complete CI/CD Pipeline with EKS And Dockerhub  
+## Complete CI CD Pipeline with EKS And Dockerhub  
 
 **Pipeline from previous module**
 
@@ -1319,7 +1380,7 @@ users:
 
  - Project I did here : (https://github.com/ManhTrinhNguyen/java-maven-Deploy-to-K8-from-Jenkin#) 
 
-### Complete CI/CD Pipeline with EKS And ECR
+### Complete CI CD Pipeline with EKS And ECR
 
 **Steps we need to do**
 
